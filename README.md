@@ -64,6 +64,7 @@
 - [ ] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
 - [ ] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
 - [ ] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
+- [ ] Serve the UI from IPFS or a traditional web server
 
 ### Aditional
 
