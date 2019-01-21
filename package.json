@@ -1,5 +1,5 @@
 {
-  "name": "gs",
+  "name": "P2PTokenExchanger",
   "version": "1.0.0",
   "description": "ERC20 Peer2Peer",
   "main": "truffle-config.js",

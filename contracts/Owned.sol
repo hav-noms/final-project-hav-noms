@@ -63,6 +63,9 @@ contract Owned {
         _;
     }
 
+    /**
+     * Events
+     */
     event OwnerNominated(address newOwner);
     event OwnerChanged(address oldOwner, address newOwner);
 }
