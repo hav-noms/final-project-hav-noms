@@ -45,35 +45,35 @@
 
 ### Design Patterns
 
-- [ ] Implement a circuit breaker (emergency stop) pattern.
-- [ ] What other design patterns have you used / not used?
-  - [ ] Why did you choose the patterns that you did?
+- [x] Implement a circuit breaker (emergency stop) pattern.
+- [x] What other design patterns have you used / not used?
+  - [x] Why did you choose the patterns that you did?
   - [ ] Why not others?
 
 ### Security Tools / Common Attacks
 
-- [ ] Explain what measures you have taken to ensure that your contracts are not susceptible to common attacks.
+- [o] Explain what measures you have taken to ensure that your contracts are not susceptible to common attacks.
 
 ### Use a Library or Extend a Contract
 
-- [ ] At least one of the project contracts includes an import from a library/contract or an ethPM package.
+- [o] At least one of the project contracts includes an import from a library/contract or an ethPM package.
 
 ### Deployment
 
-- [ ] Deploy your application onto one of the test networks.
-- [ ] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
-- [ ] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
-- [ ] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
-- [ ] Serve the UI from IPFS or a traditional web server
+- [o] Deploy your application onto one of the test networks.
+- [o] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
+- [o] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
+- [o] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
+- [o] Serve the UI from IPFS or a traditional web server
 
 ### Aditional
 
-- [ ] Smart Contract code should be commented according to the specs in the documentation https://solidity.readthedocs.io/en/v0.4.21/layout-of-source-files.html#comments"
+- [o] Smart Contract code should be commented according to the specs in the documentation https://solidity.readthedocs.io/en/v0.4.21/layout-of-source-files.html#comments"
 
 ### Stretch
 
-- [ ] Implement an upgradable design pattern
-- [ ] Oracle
+- [o] Implement an upgradable design pattern
+- [o] Oracle
 - [ ] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://rinkeby.etherscan.io/<contract_name>`
 - [ ] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
 - [ ] Project includes one smart contract implemented in LLL / Vyper
