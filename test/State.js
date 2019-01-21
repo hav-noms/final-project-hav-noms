@@ -1,15 +1,15 @@
-const Pausable = artifacts.require("Pausable");
+const State = artifacts.require("State");
 
 contract("Pausable - Test contract deployment", function(accounts) {
   const [deployerAccount, account1] = accounts;
 
   it("should revert when owner parameter is passed the zero address", async function() {
-    await assert.revert(Pausable.new(ZERO_ADDRESS, { from: deployerAccount }));
+    await assert.revert(Mortal.new(ZERO_ADDRESS, { from: deployerAccount }));
   });
 
   // TODO check events on contract creation
   it("should set owner address on deployment", async function() {
-    const mortalContractInstance = await Pausable.new(account1, {
+    const mortalContractInstance = await Mortal.new(account1, {
       from: deployerAccount
     });
     const owner = await mortalContractInstance.owner();
