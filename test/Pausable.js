@@ -9,10 +9,10 @@ contract("Pausable - Test contract deployment", function(accounts) {
 
   // TODO check events on contract creation
   it("should set owner address on deployment", async function() {
-    const mortalContractInstance = await Pausable.new(account1, {
+    const contractInstance = await Pausable.new(account1, {
       from: deployerAccount
     });
-    const owner = await mortalContractInstance.owner();
+    const owner = await contractInstance.owner();
     assert.equal(owner, account1);
   });
 });
