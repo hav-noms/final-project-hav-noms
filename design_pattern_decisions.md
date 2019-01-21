@@ -11,4 +11,26 @@ Owned <- Mortal
 Owned <- Pausable
 Owned <- Proxyable
 Owned <- Proxy
-TokenExchange <-
+Owned <- State
+
+TokenExchangeState <- State
+TokenExchange <- ExternalState, Proxyable, Mortal, Pausable
+
+## Deployment Architecture
+
+Proxy -> TokenExchange -> TokenExchangeState
+
+Users connect to the proxy address
+Fallback function routes all calls the the underlying target contract.
+Business logic in target contract is executed and all state is stored in the
+ExternalStateContract
+
+### Upgrade procedure
+
+- Deploy new version of TokenExchange Contract with params (address proxy, address TokenExchangeState, address oracle)
+- Pause existing TokenExchange Contraect
+- Pause TokenExchangeState Contract
+- Set the associatedContract of the TokenExchangeState to the new TokenExchange address
+- Set the target of the Proxy to the new TokenExchange address
+- UnPause TokenExchange Contract
+- UnPause TokenExchangeState Contract
