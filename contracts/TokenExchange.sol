@@ -1,8 +1,11 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+//import "./SafeMath.sol";
 import "./SafeDecimalMath.sol";
 import "./Mortal.sol";
+import "./Pausable.sol";
+import "./Proxyable.sol";
 import "./TokenExchangeState.sol";
 
 /**
@@ -13,15 +16,6 @@ import "./TokenExchangeState.sol";
 contract TokenExchange is Proxyable, Mortal, Pausable {
     using SafeMath for uint;
     using SafeDecimalMath for uint;
-
-    /* How long will the contract assume the price of any asset is correct */
-    uint public priceStalePeriod = 3 hours;
-
-    /* The time the prices were last updated */
-    uint public lastPriceUpdateTime;
-
-    /* The USD price of ETH denominated in UNIT */
-    uint public usdToEthPrice;
 
     /* Stores deposits from users. */
     struct tokenDeposit {
@@ -35,30 +29,45 @@ contract TokenExchange is Proxyable, Mortal, Pausable {
         address tokenContract;
     }
 
+    //-----------------------------------------------------------------
+    // Public Variables
+    //-----------------------------------------------------------------
+
+    TokenExchangeState public externalState;
+
+    uint public priceETHUSD;
+
     /* Mapping all users token deposits */
     mapping(uint => tokenDeposit) public deposits;
 
+    uint[] public despositID;
+    
     //mapping(string => tokenSymbol) public tokens;
 
     /**
      * @dev Constructor
-     * @param _owner The owner of this contract.
-     * @param _proxy The Proxy contract sddress.
+     * @param _selfDestructBeneficiary The account where all the funds go when this contrqct is killed. 
+     * @param _proxy The Proxy contract address.
      * @param _externalState The  contract we'll interact with for balances and state.
-     * @param _usdToEthPrice The current price of ETH in USD, expressed in UNIT.
+     * @param _priceETHUSD The current price of ETH in USD, expressed in UNIT.
      */
-    constructor(address _owner
-                address _proxy, 
+    constructor(address payable _selfDestructBeneficiary,
+                address payable _proxy, 
                 TokenExchangeState _externalState,
-                uint _usdToEthPrice)
-        Mortal(_owner)
-        Proxyable(_proxy, _owner)
+                uint _priceETHUSD)
+        Proxyable(_proxy)
+        Mortal(_selfDestructBeneficiary)
+        Pausable()
         public
     {
-        require(_owner != address(0), "Owner address cannot be 0");
-        owner = _owner;
-        emit OwnerChanged(address(0), _owner);
+        externalState = _externalState;
+
+        priceETHUSD = _priceETHUSD;  
     }
+
+    //-----------------------------------------------------------------
+    // Public Functions
+    //-----------------------------------------------------------------
 
 
     /**
@@ -72,16 +81,42 @@ contract TokenExchange is Proxyable, Mortal, Pausable {
                            address tokenContract)
         external
     {
-        // Grab the amount of synths
-        synth.transferFrom(msg.sender, this, amount);
+        // Grab the tokens from the contract. User must do the approve first in the DApp 
+        //tokenContract.transferFrom(msg.sender, this, amount);
 
         //Create a tokenDeposit
-        deposits[msg.sender] = tokenDeposit({ user: msg.sender, amount: amount, rate: ethRate, tokenContract: tokenContract});
-
+        uint newDespositID = despositID.push(despositID.length);
+        deposits[newDespositID] = tokenDeposit({ user: msg.sender, amount: amount, rate: ethRate, tokenContract: tokenContract});
+        
         //Add to the Array of available Tokens for sale
         //tokens[tokenContract.symbol]
         //if token already exists add to its sub array
 
+    }
+
+    /**
+     * @notice Allow users to withdraw their tokens
+     */
+    function withdrawMyDepositedTokens()
+        external
+    {
+        uint amountToSend = 0;
+
+        //Get users tokenDeposit
+
+        // If there's nothing to send then go ahead and revert the transaction
+        require(amountToSend > 0, "You have no deposits to withdraw.");
+
+        //Remove them from our storage
+
+        // Update our total
+        //totalSellableDeposits[deposit.token.symbol] = totalSellableDeposits[deposit.token.symbol].sub(amountToSend);
+
+        // Send their deposits back to them
+        //deposit.token.transfer(msg.sender, amountToSend)
+
+        //Tell the DApps there was a withdrawal
+        emit TokenWithdrawal(msg.sender, amountToSend);
     }
 
 
@@ -89,22 +124,12 @@ contract TokenExchange is Proxyable, Mortal, Pausable {
     // Modifiers
     //-----------------------------------------------------------------
 
-    /**
-     * @notice Only the Ower may call this function decorated with this modifer.
-     */
-    modifier onlyOwner
-    {
-        require(msg.sender == owner, "Only the contract owner may perform this action");
-        _;
-    }
+
 
     //-----------------------------------------------------------------
     // Events
     //-----------------------------------------------------------------
-
-    event OracleUpdated(address newOracle);
-    event PricesUpdated(uint newEthPrice, uint timeSent);
     event Exchange(string fromCurrency, uint fromAmount, string toCurrency, uint toAmount);
-    event TokenWithdrawal(address user, uint amount);
+    event TokenWithdrawal(address indexed user, uint amount);
     event TokenDeposit(address indexed user, uint amount, uint indexed depositIndex);
 }

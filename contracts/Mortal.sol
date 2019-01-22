@@ -1,9 +1,8 @@
+pragma solidity ^0.5.0;
 
-pragma solidity 0.4.25;
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-
-import "./Owned.sol";
-
+//import "./Ownable.sol";
 
 /**
  * @title A contract that can be destroyed by its owner after a delay elapses.
@@ -12,7 +11,7 @@ import "./Owned.sol";
  * without changing their mind. All ether contained in the contract
  * is forwarded to a nominated beneficiary upon destruction.
  */
-contract Mortal is Owned {
+contract Mortal is Ownable {
     
     uint public initiationTime;
     bool public selfDestructInitiated;
@@ -21,15 +20,14 @@ contract Mortal is Owned {
 
     /**
      * @dev Constructor
-     * @param _owner The account which controls this contract.
+     * @param _selfDestructBeneficiary The account which will recieve any funds in this contract when killed.
      */
-    constructor(address payable _owner)
-        Owned(_owner)
+    constructor(address payable _selfDestructBeneficiary)
         public
     {
-        require(_owner != address(0), "Owner must not be the zero address");
-        selfDestructBeneficiary = _owner;
-        emit SelfDestructBeneficiaryUpdated(_owner);
+        require(_selfDestructBeneficiary != address(0), "_selfDestructBeneficiary must not be the zero address");
+        selfDestructBeneficiary = _selfDestructBeneficiary;
+        emit SelfDestructBeneficiaryUpdated(selfDestructBeneficiary);
     }
 
     /**

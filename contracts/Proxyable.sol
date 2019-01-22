@@ -1,6 +1,7 @@
-pragma solidity 0.5.0;
+pragma solidity ^0.5.0;
 
-import "./Owned.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+//import "./Ownable.sol";
 import "./Proxy.sol";
 
 /**
@@ -11,7 +12,7 @@ import "./Proxy.sol";
  * This contract should be treated like an abstract contract. Simply inherit 
  * Proxyable on the target contract.
  */
-contract Proxyable is Owned {
+contract Proxyable is Ownable {
     /* The proxy this contract exists behind. */
     Proxy public proxy;
 
@@ -23,10 +24,8 @@ contract Proxyable is Owned {
     /**
      * @dev Constructor
      * @param _proxy The proxy this contract exists behind
-     * @param _owner The account which controls this contract
      */
-    constructor(address _proxy, address _owner)
-        Owned(_owner)
+    constructor(address payable _proxy)
         public
     {
         proxy = Proxy(_proxy);
@@ -36,7 +35,7 @@ contract Proxyable is Owned {
     /**
      * @param _proxy The proxy this contract exists behind
      */
-    function setProxy(address _proxy)
+    function setProxy(address payable _proxy)
         external
         onlyOwner
     {
@@ -86,7 +85,7 @@ contract Proxyable is Owned {
         if (Proxy(msg.sender) != proxy) {
             messageSender = msg.sender;
         }
-        require(messageSender == owner, "This action can only be performed by the owner");
+        require(messageSender == Ownable.owner(), "This action can only be performed by the owner");
         _;
     }
 

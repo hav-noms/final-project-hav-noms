@@ -1,3 +1,7 @@
+pragma solidity ^0.5.0;
+
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 /*
 
 A library providing safe mathematical operations for division and
@@ -9,10 +13,6 @@ accurately.
 
 -----------------------------------------------------------------
 */
-
-pragma solidity 0.4.25;
-
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
  * @title Safely manipulate unsigned fixed-point decimals at a given precision level.

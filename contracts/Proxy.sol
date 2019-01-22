@@ -1,7 +1,7 @@
-pragma solidity 0.5.0;
+pragma solidity ^0.5.0;
 
-
-import "./Owned.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+//import "./Ownable.sol";
 import "./Proxyable.sol";
 
 /**
@@ -26,16 +26,14 @@ import "./Proxyable.sol";
  * to allow DApp compatability with events being emited from this publicy 
  * accessible address.
  */
-contract Proxy is Owned {
+contract Proxy is Ownable {
 
     Proxyable public target;
 
     /**
      * @dev Constructor
-     * @param _owner The account which controls this contract
      */
-    constructor(address _owner)
-        Owned(_owner)
+    constructor()
         public
     {}
 
@@ -53,10 +51,10 @@ contract Proxy is Owned {
 
     /**
     * @dev Only the proxyable target contract may call this function to emit an event
-    * @param callData 
+    * @param callData the function hash and the arguments 
     * @param numTopics the number of topics to log
     */
-    function _emit(bytes callData, uint numTopics, bytes32 topic1, bytes32 topic2, bytes32 topic3, bytes32 topic4)
+    function _emit(bytes calldata callData, uint numTopics, bytes32 topic1, bytes32 topic2, bytes32 topic3, bytes32 topic4)
         external
         onlyTarget
     {
@@ -119,7 +117,7 @@ contract Proxy is Owned {
 
     /**
     * @dev Only the proxyable target contract may call this function
-    * @param msg.sender The msg.sender or the caller of the function
+    * @notice The msg.sender or the caller of the function
     */
     modifier onlyTarget {
         require(Proxyable(msg.sender) == target, "Must be proxy target");

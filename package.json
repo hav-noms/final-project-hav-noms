@@ -1,7 +1,7 @@
 {
   "name": "P2PTokenExchanger",
   "version": "1.0.0",
-  "description": "ERC20 Peer2Peer",
+  "description": "ERC20 to ETH Peer2Peer",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -22,5 +22,19 @@
   "bugs": {
     "url": "https://github.com/dev-bootcamp-2019/final-project-hav-noms/issues"
   },
-  "homepage": "https://github.com/dev-bootcamp-2019/final-project-hav-noms#readme"
+  "homepage": "https://github.com/dev-bootcamp-2019/final-project-hav-noms#readme",
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-havven": "^1.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  },
+  "dependencies": {
+    "openzeppelin-solidity": "^2.1.2"
+  }
 }

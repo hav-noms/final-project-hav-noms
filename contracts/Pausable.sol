@@ -1,10 +1,7 @@
+pragma solidity ^0.5.0;
 
-
-pragma solidity 0.4.25;
-
-
-import "./Owned.sol";
-
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+//import "./Ownable.sol";
 
 /**
  * @title A contract that can be paused by its owner
@@ -12,17 +9,15 @@ import "./Owned.sol";
  * paused. It also defines a modifier which can be used by the
  * inheriting contract to prevent actions while paused.
  */
-contract Pausable is Owned {
+contract Pausable is Ownable {
     
     uint public lastPauseTime;
     bool public paused;
 
     /**
      * @dev Constructor
-     * @param _owner The account which controls this contract.
      */
-    constructor(address _owner)
-        Owned(_owner)
+    constructor()
         public
     {
         // Paused will be false, and lastPauseTime will be 0 upon initialisation

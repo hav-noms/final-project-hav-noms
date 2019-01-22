@@ -5,8 +5,8 @@ design_pattern_desicions.md adequately describes the design patterns implemented
 - [x] Proxy - Proxy pattern allows the core business logic smart contract to be upgradable without having to worry about;
   - users/dapps having to update their contract / token addresses on every upgrade
   - all token balances stored in an external state contract not requiring a migration or token swap or lost/burned state
-- [x] Owned - Protect the critical system admin functions with owner only modifers
-- [x] Mortal - ownerOnly functionality to allow deprecated contracts to be killed/selfdestructed as part of the upgrade mechanism
+- [x] Owned - Protect the critical system admin functions with owner only modifers. I've used my own owned instead of open zeplins to have full control over the code on this one.
+- [x] Mortal - ownerOnly functionality to allow deprecated contracts to be killed/selfdestructed as part of the upgrade mechanism.
 - [x] Pausable - ownerOnly Circuit Breaker to allow the Smart Contract system to be stop incase of a known vulnerability and for upgrades
 
 ## Inheritance Map

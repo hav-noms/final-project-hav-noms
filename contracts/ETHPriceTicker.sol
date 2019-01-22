@@ -1,10 +1,12 @@
 pragma solidity ^0.5.0;
 
-import "github.com/oraclize/ethereum-api/oraclizeAPI_0.5.sol";
+import "./oraclizeAPI_0.5.sol";
 
 /**
  * @title ETHUSD Price Oracle
  * @notice Using Oraclize to get the latest ETHUSD price from kraken
+ * 
+ * This file remains largly unchanged from https://docs.oraclize.it/#ethereum
  */
 contract ETHPriceTicker is usingOraclize {
 

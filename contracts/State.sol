@@ -1,7 +1,7 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.5.0;
 
-
-import "./Owned.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+//import "./Ownable.sol";
 
 /**
  * @title Owner funtions to set the Associate Contract of the state that we store. 
@@ -17,13 +17,12 @@ import "./Owned.sol";
  * state contract, whose owner would then change its associated
  * contract to the new one.
  */
-contract State is Owned {
+contract State is Ownable {
     // the address of the contract that can modify variables
     // this can only be changed by the owner of this contract
     address public associatedContract;
 
-    constructor(address _owner, address _associatedContract)
-        Owned(_owner)
+    constructor(address _associatedContract)
         public
     {
         associatedContract = _associatedContract;
