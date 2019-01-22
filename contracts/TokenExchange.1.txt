@@ -14,7 +14,7 @@ import "./ETHPriceTicker.sol";
  * @notice a Simple Smart contract system to allow people to list their alt coins to sell for ETH
  * 
  */
-contract TokenExchange {
+contract TokenExchange is Proxyable, Mortal, Pausable, ETHPriceTicker {
     using SafeMath for uint;
     using SafeDecimalMath for uint;
 
@@ -54,11 +54,15 @@ contract TokenExchange {
                 address payable _proxy, 
                 TokenExchangeState _externalState,
                 string memory _priceETHUSD)
+        Proxyable(_proxy)
+        Mortal(_selfDestructBeneficiary)
+        Pausable()
+        ETHPriceTicker()
         public
     {
         externalState = _externalState;
 
-        //priceETHUSD = _priceETHUSD;  
+        priceETHUSD = _priceETHUSD;  
     }
 
     //-----------------------------------------------------------------
@@ -81,8 +85,8 @@ contract TokenExchange {
         //tokenContract.transferFrom(msg.sender, this, amount);
 
         //Create a tokenDeposit
-        //uint newDespositID = despositID.push(despositID.length);
-        //deposits[newDespositID] = tokenDeposit({ user: msg.sender, amount: amount, rate: ethRate, tokenContract: tokenContract});
+        uint newDespositID = despositID.push(despositID.length);
+        deposits[newDespositID] = tokenDeposit({ user: msg.sender, amount: amount, rate: ethRate, tokenContract: tokenContract});
         
         //Add to the Array of available Tokens for sale
         //tokens[tokenContract.symbol]
@@ -96,12 +100,12 @@ contract TokenExchange {
     function withdrawMyDepositedTokens()
         external
     {
-        //uint amountToSend = 0;
+        uint amountToSend = 0;
 
         //Get users tokenDeposit
 
         // If there's nothing to send then go ahead and revert the transaction
-        //require(amountToSend > 0, "You have no deposits to withdraw.");
+        require(amountToSend > 0, "You have no deposits to withdraw.");
 
         //Remove them from our storage
 
@@ -112,7 +116,7 @@ contract TokenExchange {
         //deposit.token.transfer(msg.sender, amountToSend)
 
         //Tell the DApps there was a withdrawal
-        //emit TokenWithdrawal(msg.sender, amountToSend);
+        emit TokenWithdrawal(msg.sender, amountToSend);
     }
 
     /**
@@ -133,7 +137,7 @@ contract TokenExchange {
         //Delete the deposit to prevent a reentrant attack
         
         //Send the tokens to the buyer
-        //uint amountToSend = 0;
+        uint amountToSend = 0;
 
         //Send the ETH to the seller
 
