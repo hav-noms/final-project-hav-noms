@@ -4,7 +4,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 //import "./Ownable.sol";
 
 /**
- * @title Owner funtions to set the Associate Contract of the state that we store. 
+ * @title Owner functions to set the Associated Contract of the state that we store. 
  * @notice  This contract is used side by side with external state contract
  * It provides an easy way to upgrade contract logic while
  * maintaining all user balances. This is designed
@@ -18,6 +18,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * contract to the new one.
  */
 contract State is Ownable {
+
     // the address of the contract that can modify variables
     // this can only be changed by the owner of this contract
     address public associatedContract;
@@ -33,7 +34,10 @@ contract State is Ownable {
     // Setters
     //-----------------------------------------------------------------
 
-    // Change the associated contract to a new address
+    /**
+     * @notice Change the associated contract to a new address
+     * @param _associatedContract the address of the Contract that owns this state
+     */
     function setAssociatedContract(address _associatedContract)
         external
         onlyOwner

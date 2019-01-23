@@ -6,25 +6,25 @@ import "./oraclizeAPI_0.5.sol";
  * @title ETHUSD Price Oracle
  * @notice Using Oraclize to get the latest ETHUSD price from kraken
  * 
- * This file remains largly unchanged from https://docs.oraclize.it/#ethereum
+ * This file was modified from https://docs.oraclize.it/#ethereum
  */
 contract ETHPriceTicker is usingOraclize {
 
     string public priceETHUSD;
 
     constructor() public {
-        oraclize_setProof(proofType_Android | proofStorage_IPFS);
-        update(); // Update price on contract creation...
+        //oraclize_setProof(proofType_Android | proofStorage_IPFS);
+        //update(); // Update price on contract creation...
     }
 
     function __callback(bytes32 myid, string memory result, bytes memory proof) public {
         require(msg.sender == oraclize_cbAddress(), "Sender must be oraclize_cbAddress");
-        update(); // Recursively update the price stored in the contract...
+        updateEthPrice(); // Recursively update the price stored in the contract...
         priceETHUSD = result;
         emit LogNewPriceUpdate(priceETHUSD);
     }
 
-    function update() public payable {
+    function updateEthPrice() public payable {
         if (oraclize_getPrice("URL") > address(this).balance) {
             emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee!");
         } else {

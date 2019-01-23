@@ -1,5 +1,7 @@
 # final-project-hav-noms
 
+This project focuses on the best patterns and practisess implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary Smart contract a lot of focus of the solution is the incorporation of useful Design patterns and the stretch goals that would be used in a realworld implemenation.
+
 ## Developer Bootcamp Final Project Evaluation Form
 
 - [ ] A README.md that explains the project
@@ -74,6 +76,6 @@
 
 - [o] Implement an upgradable design pattern
 - [o] Oracle
-- [ ] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://rinkeby.etherscan.io/<contract_name>`
-- [ ] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
+- [o] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://rinkeby.etherscan.io/<contract_name>`
+- [o] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
 - [ ] Project includes one smart contract implemented in LLL / Vyper

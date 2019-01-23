@@ -1,26 +1,30 @@
 const Pausable = artifacts.require("Pausable");
 
-contract("Pausable - Test contract deployment", function(accounts) {
+contract("Pausable - Tiny Contract only 3 possible tests", function(accounts) {
   const [deployerAccount, account1] = accounts;
 
-  it("should revert when owner parameter is passed the zero address", async function() {
-    await assert.revert(Pausable.new(ZERO_ADDRESS, { from: deployerAccount }));
+  let contractInstance;
+
+  beforeEach(async function() {
+    contractInstance = await Pausable.deployed();
   });
 
-  // TODO check events on contract creation
   it("should set owner address on deployment", async function() {
-    const contractInstance = await Pausable.new(account1, {
-      from: deployerAccount
-    });
     const owner = await contractInstance.owner();
-    assert.equal(owner, account1);
+    assert.equal(owner, deployerAccount);
   });
-});
 
-contract("Pausable - Pre deployed contract", async function(accounts) {
-  const [account1, account2, account3, account4] = accounts.slice(1); // The first account is the deployerAccount above
+  it("should setPaused to true and emit the correct event", async function() {
+    const tx = await contractInstance.setPaused(true);
+    const paused = await contractInstance.paused();
+    assert.equal(paused, true);
+    // TODO check events
+  });
 
-  it("should setPaused to true and emit the correct event", async function() {});
-
-  it("should setPaused to false and emit the correct event", async function() {});
+  it("should setPaused to false and emit the correct event", async function() {
+    const tx = await contractInstance.setPaused(false);
+    const paused = await contractInstance.paused();
+    assert.equal(paused, false);
+    // TODO check events
+  });
 });

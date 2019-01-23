@@ -1,8 +1,10 @@
 const Proxy = artifacts.require("Proxy");
 const Mortal = artifacts.require("Mortal");
 const Pausable = artifacts.require("Pausable");
+const State = artifacts.require("State");
 const PublicSafeDecimalMath = artifacts.require("PublicSafeDecimalMath");
 const SafeDecimalMath = artifacts.require("SafeDecimalMath");
+const ETHPriceTicker = artifacts.require("ETHPriceTicker");
 const TokenExchange = artifacts.require("TokenExchange");
 const TokenExchangeState = artifacts.require("TokenExchangeState");
 
@@ -29,6 +31,30 @@ module.exports = async function(deployer, network, accounts) {
   // ----------------
   deployer.link(SafeDecimalMath, PublicSafeDecimalMath);
   await deployer.deploy(PublicSafeDecimalMath, { from: deployerAccount });
+
+  // ----------------
+  // Mortal contract is not used in a standalone way on mainnet, this is for unit testing
+  // ----------------
+  console.log("Deploy Mortal for testing only");
+  await deployer.deploy(Mortal, deployerAccount, { from: deployerAccount });
+
+  // ----------------
+  // Pausable contract is not used in a standalone way on mainnet, this is for unit testing
+  // ----------------
+  console.log("Deploy Pausable for testing only");
+  await deployer.deploy(Pausable, { from: deployerAccount });
+
+  // ----------------
+  // State contract is not used in a standalone way on mainnet, this is for unit testing
+  // ----------------
+  console.log("Deploy State for testing only");
+  await deployer.deploy(State, ZERO_ADDRESS, { from: deployerAccount });
+
+  // ----------------
+  // ETHPriceTicker contract is not used in a standalone way on mainnet, this is for unit testing
+  // ----------------
+  console.log("Deploy ETHPriceTicker for testing only");
+  await deployer.deploy(ETHPriceTicker, { from: deployerAccount });
 
   // ----------------
   // TokenExchangeState

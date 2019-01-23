@@ -34,6 +34,7 @@ contract Proxy is Ownable {
      * @dev Constructor
      */
     constructor()
+        Ownable()
         public
     {}
 

@@ -26,6 +26,7 @@ contract Proxyable is Ownable {
      * @param _proxy The proxy this contract exists behind
      */
     constructor(address payable _proxy)
+        Ownable()
         public
     {
         proxy = Proxy(_proxy);
@@ -85,7 +86,7 @@ contract Proxyable is Ownable {
         if (Proxy(msg.sender) != proxy) {
             messageSender = msg.sender;
         }
-        require(messageSender == Ownable.owner(), "This action can only be performed by the owner");
+        require(messageSender == owner(), "This action can only be performed by the owner");
         _;
     }
 
