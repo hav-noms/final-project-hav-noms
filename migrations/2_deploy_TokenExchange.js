@@ -7,6 +7,7 @@ const SafeDecimalMath = artifacts.require("SafeDecimalMath");
 const ETHPriceTicker = artifacts.require("ETHPriceTicker");
 const TokenExchange = artifacts.require("TokenExchange");
 const TokenExchangeState = artifacts.require("TokenExchangeState");
+const ShartCoin = artifacts.require("ShartCoin");
 
 // Update values before deployment
 const ZERO_ADDRESS = "0x" + "0".repeat(40);
@@ -18,6 +19,7 @@ module.exports = async function(deployer, network, accounts) {
   const [deployerAccount] = accounts;
 
   // Note: This deployment script is not used on mainnet, it's only for testing deployments.
+  console.log("Network: ", network);
 
   // ----------------
   // Safe Decimal Math library
@@ -25,36 +27,48 @@ module.exports = async function(deployer, network, accounts) {
   console.log("Deploying SafeDecimalMath...");
   await deployer.deploy(SafeDecimalMath, { from: deployerAccount });
 
-  // The PublicSafeDecimalMath contract is not used in a standalone way on mainnet, this is for testing
-  // ----------------
-  // Public Safe Decimal Math Library
-  // ----------------
-  deployer.link(SafeDecimalMath, PublicSafeDecimalMath);
-  await deployer.deploy(PublicSafeDecimalMath, { from: deployerAccount });
+  if (network == "development") {
+    console.log(
+      "This is the development network so we're going to deploy all the helper contracts for uni testing"
+    );
+
+    // The PublicSafeDecimalMath contract is not used in a standalone way on mainnet, this is for testing
+    // ----------------
+    // Public Safe Decimal Math Library
+    // ----------------
+    deployer.link(SafeDecimalMath, PublicSafeDecimalMath);
+    await deployer.deploy(PublicSafeDecimalMath, { from: deployerAccount });
+
+    // ----------------
+    // Mortal contract is not used in a standalone way on mainnet, this is for unit testing
+    // ----------------
+    console.log("Deploy Mortal for testing only");
+    await deployer.deploy(Mortal, deployerAccount, { from: deployerAccount });
+
+    // ----------------
+    // Pausable contract is not used in a standalone way on mainnet, this is for unit testing
+    // ----------------
+    console.log("Deploy Pausable for testing only");
+    await deployer.deploy(Pausable, { from: deployerAccount });
+
+    // ----------------
+    // State contract is not used in a standalone way on mainnet, this is for unit testing
+    // ----------------
+    console.log("Deploy State for testing only");
+    await deployer.deploy(State, ZERO_ADDRESS, { from: deployerAccount });
+
+    // ----------------
+    // ETHPriceTicker contract is not used in a standalone way on mainnet, this is for unit testing
+    // ----------------
+    console.log("Deploy ETHPriceTicker for testing only");
+    await deployer.deploy(ETHPriceTicker, { from: deployerAccount });
+  }
 
   // ----------------
-  // Mortal contract is not used in a standalone way on mainnet, this is for unit testing
+  // ShartCoin
   // ----------------
-  console.log("Deploy Mortal for testing only");
-  await deployer.deploy(Mortal, deployerAccount, { from: deployerAccount });
-
-  // ----------------
-  // Pausable contract is not used in a standalone way on mainnet, this is for unit testing
-  // ----------------
-  console.log("Deploy Pausable for testing only");
-  await deployer.deploy(Pausable, { from: deployerAccount });
-
-  // ----------------
-  // State contract is not used in a standalone way on mainnet, this is for unit testing
-  // ----------------
-  console.log("Deploy State for testing only");
-  await deployer.deploy(State, ZERO_ADDRESS, { from: deployerAccount });
-
-  // ----------------
-  // ETHPriceTicker contract is not used in a standalone way on mainnet, this is for unit testing
-  // ----------------
-  console.log("Deploy ETHPriceTicker for testing only");
-  await deployer.deploy(ETHPriceTicker, { from: deployerAccount });
+  console.log("Deploying Test ERC20 Token...");
+  await deployer.deploy(ShartCoin, { from: deployerAccount });
 
   // ----------------
   // TokenExchangeState
@@ -83,7 +97,6 @@ module.exports = async function(deployer, network, accounts) {
   console.log("tokenExchangeProxy.address:", tokenExchangeProxy.address);
   console.log("tokenExchangeState.address:", tokenExchangeState.address);
   console.log("_usdToEthPrice:", SEED_ETHUSD_PRICE);
-  // constructor(address payable _selfDestructBeneficiary, address payable _proxy, TokenExchangeState _externalState, uint _usdToEthPrice)
   deployer.link(SafeDecimalMath, TokenExchange);
   const tokenExchange = await deployer.deploy(
     TokenExchange,
@@ -93,7 +106,7 @@ module.exports = async function(deployer, network, accounts) {
     SEED_ETHUSD_PRICE,
     {
       from: deployerAccount,
-      gas: 9000000
+      gas: 8000000
     }
   );
   console.log(" Successfully deployed all contracts:");

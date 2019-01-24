@@ -1,7 +1,12 @@
 Deployed Contract Addresses
 
-MAINNET
+ROPSTEN
 
-KOVAN
+RINKEBY
+
+KOVAN               https://kovan.etherscan.io/address/
+Proxy               0xd2649bcdc993888978B9500E9681130bfd49C93C 
+TokenExchange       0xD1edAf01750b3b654801Ee0F16F2867B436E51bE
+TokenExchangeState  0xa688320f2F5e4A10A453e18Ae267f9E56dFA5B93
 
 IPFS

@@ -1,13 +1,13 @@
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "./SafeDecimalMath.sol";
 import "./Mortal.sol";
 import "./Pausable.sol";
 import "./Proxyable.sol";
 import "./TokenExchangeState.sol";
 import "./ETHPriceTicker.sol";
-import "./IERC20.sol";
 
 /**
  * @title A simple decentralized Peer 2 Peer Token exchanger
