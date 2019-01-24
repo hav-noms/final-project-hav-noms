@@ -1,3 +1,5 @@
+const { fastForward } = require("../utils/testUtils");
+
 const Mortal = artifacts.require("Mortal");
 
 contract("Mortal", function(accounts) {
@@ -37,7 +39,7 @@ contract("Mortal", function(accounts) {
     // Set the setSelfDestructBeneficiary
     const transaction = await mortal.setSelfDestructBeneficiary(account1);
     assert.eventEqual(transaction, "SelfDestructBeneficiaryUpdated", {
-      beneficiary: deployerAccount
+      newBeneficiary: account1
     });
 
     // Check the selfDestructBeneficiary is updated to the new address
@@ -53,7 +55,7 @@ contract("Mortal", function(accounts) {
     // We initiate the self destruction of the contract
     const transaction = await mortal.initiateSelfDestruct();
     assert.eventEqual(transaction, "SelfDestructInitiated", {
-      beneficiary: deployerAccount
+      selfDestructDelay: SELFDESTRUCT_DELAY
     });
 
     // Check the selfDestructInitiated is now true
@@ -78,10 +80,8 @@ contract("Mortal", function(accounts) {
     await mortal.initiateSelfDestruct();
 
     // Cancel the self-destruction
-    const transaction = await mortal.selfDestruct();
-    assert.eventEqual(transaction, "SelfDestructed", {
-      beneficiary: owner
-    });
+    const transaction = await mortal.terminateSelfDestruct();
+    assert.eventEqual(transaction, "SelfDestructTerminated", {});
 
     // Check the selfDestructInitiated is now false
     const selfDestructInitiated = await mortal.selfDestructInitiated();
@@ -98,16 +98,16 @@ contract("Mortal", function(accounts) {
 
   it("should only be terminated after we reach the SELFDESTRUCT_DELAY", async function() {
     // We initiate the self destruction of the contract
-    await selfDestructible.initiateSelfDestruct();
+    await mortal.initiateSelfDestruct();
 
     // Self destruct should revert as delay has not yet elapsed
-    await assert.revert(selfDestructible.selfDestruct());
+    await assert.revert(mortal.selfDestruct());
 
     // We fast forward the blockchain to reach the delay
     await fastForward(SELFDESTRUCT_DELAY + 1);
 
     // Self destruct should now work and emit the correct event
-    const transaction = await selfDestructible.selfDestruct();
+    const transaction = await mortal.selfDestruct();
     assert.eventEqual(transaction, "SelfDestructed", {
       beneficiary: deployerAccount
     });

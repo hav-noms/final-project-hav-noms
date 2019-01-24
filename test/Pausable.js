@@ -1,6 +1,6 @@
 const Pausable = artifacts.require("Pausable");
 
-contract("Pausable - Tiny Contract only 3 possible tests", function(accounts) {
+contract("Pausable - Tiny Contract only 3 tests", function(accounts) {
   const [deployerAccount, account1] = accounts;
 
   let contractInstance;

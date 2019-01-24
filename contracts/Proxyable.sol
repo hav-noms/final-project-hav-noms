@@ -19,7 +19,7 @@ contract Proxyable is Ownable {
     /* The caller of the proxy, passed through to this contract.
      * Note that every function using this member must apply the onlyProxy or
      * optionalProxy modifiers, otherwise their invocations can use stale values. */ 
-    address messageSender; 
+    address payable messageSender; 
 
     /**
      * @dev Constructor
@@ -48,7 +48,7 @@ contract Proxyable is Ownable {
     * @dev We must get the msg.sender from the proxy otherwise the sender will be the Proxy
     * @param sender The msg.sender or the caller of the function
     */
-    function setMessageSender(address sender)
+    function setMessageSender(address payable sender)
         external
         onlyProxy
     {

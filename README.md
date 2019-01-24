@@ -1,6 +1,42 @@
-# final-project-hav-noms
+# P2P Token Exchange
 
-This project focuses on the best patterns and practisess implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary Smart contract a lot of focus of the solution is the incorporation of useful Design patterns and the stretch goals that would be used in a realworld implemenation.
+The Smart Contract is a simple Peer 2 Peer ERC Token exchange where buyers pay ETH for the tokens.
+
+This project focuses on the best patterns and practisess implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary Smart contract a lot of focus of the solution is the incorporation of useful design patterns and the stretch goals that would be used in a realworld implemenation.
+
+## User Journey
+
+- Navigate to the REACT Dapp on IPFS https://ipfs.io/ipfs/Qmb.....
+- See a list of available trades or
+- Create a trade listing and deposit your ERC20 Tokens escrowed in the contract
+- Buyers can select a trade to fulfill and send ETH to the contract and will be send your tokens, you will be sent the ETH
+- Withdraw your trade listing and have your tokens returned to you
+
+## Setup
+
+Requirements:
+
+Requirements:
+
+- Truffle
+- Node Package Manager (npm)
+- Ganache CLI
+- MetaMask
+
+## Steps:
+
+## Run Tests
+
+1. Clone the repo
+2. Go into the root directory and run `npm install`
+3. Run Ganache CLI
+4. Run `truffle test`
+
+# Run the DAPP
+
+1. Go into the client folder and run `npm install`
+2. Run `npm run start`
+3. Make sure that MetaMask is connected to localhost:8545
 
 ## Developer Bootcamp Final Project Evaluation Form
 

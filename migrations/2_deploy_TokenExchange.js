@@ -93,7 +93,7 @@ module.exports = async function(deployer, network, accounts) {
     SEED_ETHUSD_PRICE,
     {
       from: deployerAccount,
-      gas: 5000000
+      gas: 9000000
     }
   );
   console.log(" Successfully deployed all contracts:");
