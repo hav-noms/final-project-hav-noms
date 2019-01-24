@@ -106,12 +106,13 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         optionalProxy
         notPaused
         public
+        returns (uint)
     {
         // Check amount must be something to trade
-        require(amount > 0, "You cant Deposit nothing to trade");
+        require(amount > 0, "You cant deposit nothing to trade");
 
         // Check tokens have a price
-        require(ethRate > 0, "Its highly doubtfull you want these to be free");
+        require(ethRate > 0, "It's highly doubtfull you want these to be free");
 
         // Grab the users tokens from its contract. User must do the approve first in the DApp 
         require(IERC20(tokenContract).transferFrom(messageSender, address(this), amount));
@@ -130,6 +131,8 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         
         // Tell the DApps we have a new trade listed
         emit TradeListingDeposit(messageSender, amount, newTradeID);
+
+        return newTradeID;
     }
 
     /**
@@ -154,7 +157,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         removeTradeListing(listingID);
 
         // Tell the DApps there was a withdrawal
-        emit TradeListingWithdrawal(messageSender, trade.amount);
+        emit TradeListingWithdrawal(messageSender, trade.amount, listingID);
     }
 
     /**
@@ -265,5 +268,5 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     //-----------------------------------------------------------------
     event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
     event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
-    event TradeListingWithdrawal(address indexed user, uint amount);
+    event TradeListingWithdrawal(address indexed user, uint amount, uint indexed tradeID);
 }

@@ -1,3 +1,12 @@
+const {
+  currentTime,
+  fastForward,
+  getEthBalance,
+  toUnit,
+  multiplyDecimal,
+  divideDecimal
+} = require("../utils/testUtils");
+
 const TokenExchange = artifacts.require("TokenExchange");
 
 contract("TokenExchange - Test contract deployment", function(accounts) {
@@ -53,59 +62,103 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       assert.equal(_priceETHUSD, priceETHUSD);
     });
 
-    // Validate the correct events are emitted
-    /*     
-    it.only("should emit the OwnershipTransferred event", async function() {
-      const event = tokenExchange.events.find(
-        log => log.event === "OwnershipTransferred"
-      );
-      assert.eventEqual(event, "OwnershipTransferred", {
-        previousOwner: ZERO_ADDRESS,
-        newOwner: deployerAccount
+    describe("When a seller wants to create a trade", async function() {
+      const usdEth = toUnit("100");
+      const tokenPrice = toUnit(".08");
+      const numberOfTokens = toUnit("1000");
+      let transaction;
+
+      beforeEach(async function() {
+        tokenExchange = await TokenExchange.deployed();
+
+        // Deploy mintable ERC20 Contract
+        const shartCoinAddress = ZERO_ADDRESS;
+        // Approve transfer of 1000
+
+        // Create a trade listing
+        transaction = await tokenExchange.createTradeListing(
+          "SHT",
+          numberOfTokens,
+          tokenPrice,
+          shartCoinAddress,
+          {
+            from: owner
+          }
+        );
       });
+
+      it("should revert if the contract is paused"); //, async function() {});
+
+      it("should revert if the amount is zero"); //, async function() {});
+
+      it("should revert if the ethRate is zero"); //, async function() {});
+
+      it(
+        "should revert if the ERCToken Contract has not approved the amount to transfer"
+      ); //, async function() {});
+
+      it("should create a tradeListing and store it"); //, async function() {});
+
+      it("should emit the event TradeListingDeposit"); //, async function() {});
+      // event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
+      /* 
+        assert.eventEqual(transaction, "TradeListingDeposit", {
+          user: owner,
+          amount: numberOfTokens
+        });
+         */
     });
 
-    it("should emit the ProxyUpdated event", async function() {
-      const event = tokenExchange.events.find(
-        log => log.event === "ProxyUpdated"
-      );
-      assert.eventEqual(event, "ProxyUpdated", {
-        proxyAddress: proxyAddress
+    describe("When a seller wants to withdraw a deposit", async function() {
+      const usdEth = toUnit("100");
+      const tokenPrice = toUnit(".08");
+      const numberOfTokens = toUnit("1000");
+      let transaction;
+
+      beforeEach(async function() {
+        tokenExchange = await TokenExchange.deployed();
+
+        // Create a trade listing
+
+        // Now withdraw it
       });
+
+      it("should revert if the contract is paused"); //, async function() {});
+
+      it("should revert if the deposit does not belong to the user"); //, async function() {});
+
+      it("should delete the trade listing"); //, async function() {});
+
+      it("should return the users tokens deposited into the contract"); //, async function() {});
+
+      it("should emit the event TradeListingWithdrawal"); //, async function() {
+      /*     assert.eventEqual(transaction, "TradeListingWithdrawal", {
+            user: owner,
+            amount: numberOfTokens,
+            tradeID: 0
+          });
+        });
+      */
+      it("should allow user to exchange ERC20 Tokens for ETH"); //, async function() {});
     });
 
-    it("should emit the SelfDestructBeneficiaryUpdated event", async function() {
-      const event = tokenExchange.events.find(
-        log => log.event === "ProxyUpdated"
-      );
-      assert.eventEqual(event, "ProxyUpdated", {
-        newBeneficiary: deployerAccount
+    describe("When a buyer wants to execute a trade", async function() {
+      beforeEach(async function() {
+        // call tokenExchange.createTradeListing
+        // call tokenExchange.exchangeEtherForTokens
       });
-    }); */
-  });
 
-  describe("When calling the core exchange functions", async function() {
-    beforeEach(async function() {
-      tokenExchange = await TokenExchange.deployed();
+      it("should revert if the contract is paused"); //, async function() {});
+
+      it("should revert if the sender did not send enough ETH"); //, async function() {});
+
+      it("should delete the trade listing"); //, async function() {});
+
+      it("should send the buyer the correct amount of tokens"); //, async function() {});
+
+      it("should send the user the correct amount of ETH"); //, async function() {});
+
+      it("should emit the Exchange event"); //, async function() {});
     });
-
-    /*     it("should allow user to deposit an ERC20 token to sell", async function() {
-      // Deploy mintable ERC20 Contract
-      const shartCoinAddress = ZERO_ADDRESS;
-      //Approve transfer of 1000
-
-      // Create a trade listing
-      const transaction = await tokenExchange.createTradeListing(
-        "sUSD",
-        100
-        0.0087
-        shartCoinAddress);
-
-      
-    }); */
-
-    it("should allow user to withdraw their tokens for sale", async function() {});
-
-    it("should allow user to exchange ERC20 Tokens for ETH"); //, async function() {});
   });
 });
