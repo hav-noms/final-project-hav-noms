@@ -80,8 +80,8 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
      * @notice Get the total number of tokens for he DApp to iterate
      */
     function getTradeListingCount() 
-        optionalProxy
         public 
+        view
         returns(uint) 
     {
         return tradeID.length;
@@ -177,11 +177,12 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         TradeListing memory trade = tradeListings[listingID];
 
         // Revert if its not found
-        require(trade.amount != 0);
+        require(trade.amount != 0, "The Trade listingID you've requested does not exist");
 
         // Make sure the user has sent enough ETH to cover the trade
         uint tokenCost = trade.amount.mul(trade.ethRate);
-        require(msg.value >= tokenCost); 
+        emit ListingPriceQuery(tokenCost, listingID);
+        require(msg.value >= tokenCost, "You have not sent enough ETH to cover the cost of this trade"); 
 
         // Looks like we can fullfill this exchange
 
@@ -200,20 +201,57 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
     function getListingCostPriceInUSD(uint listingID)   
         optionalProxy
-        external 
+        public 
         returns (uint costETH, uint costUSD)
     {
+        emit Loguint("listingID arg", listingID);
         // Find the TokenDeposit by depositID in our mapping 
         TradeListing memory trade = tradeListings[listingID];
+        // Revert if its not found
+        require(trade.amount != 0, "The Trade listingID you've requested does not exist");
 
+        emit Loguint("trade.amount", trade.amount);
+
+        emit LogString("call updateEthPrice","");
         // Get the oracle to get the latest price
-        updateEthPrice();
+        //updateEthPrice();
 
         // Calculate the cost in ETH to buy this trade
         costETH = trade.amount.mul(trade.ethRate);
+        emit Loguint("costETH", costETH);
 
         // Return the price in USD
         costUSD = costETH.mul(parseInt(priceETHUSD));
+        emit Loguint("costUSD", costUSD);
+    }
+
+    function calcCostPriceInUSD(uint amount, uint rate)   
+        optionalProxy
+        public 
+        returns (uint costETH, uint costUSD)
+    {
+        emit Loguint("rate arg", rate);
+
+        emit Loguint("amount arg", amount);
+
+        // Calculate the cost in ETH to buy this trade
+        costETH = amount.mul(rate);
+        emit Loguint("costETH", costETH);
+
+        // Return the price in USD
+        costUSD = costETH.mul(parseInt(priceETHUSD));
+        emit Loguint("costUSD", costUSD);
+    }
+
+    function callOracle()   
+        optionalProxy
+        public 
+        returns (bool)
+    {
+        emit LogString("call updateEthPrice","");
+        updateEthPrice();
+        emit LogString("updateEthPrice called", "");
+        return true;
     }
 
     /**
@@ -269,4 +307,8 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
     event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
     event TradeListingWithdrawal(address indexed user, uint amount, uint indexed tradeID);
+    event ListingPriceQuery(uint amount, uint indexed tradeID);
+    
+    event LogString(string val1, string val2);
+    event Loguint(string val1, uint val2);
 }

@@ -63,7 +63,94 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       assert.equal(_priceETHUSD, priceETHUSD);
     });
 
-    describe.only("When a seller wants to create a trade", async function() {
+    describe("When a seller wants to create a trade", async function() {
+      const usdEth = toUnit("100");
+      const tokenPrice = toUnit(".08"); //in ETH
+      const numberOfTokens = toUnit("1000");
+      let transaction;
+
+      beforeEach(async function() {
+        tokenExchange = await TokenExchange.deployed();
+        shartCoin = await ShartCoin.deployed();
+      });
+
+      it("should revert if the contract is paused", async function() {
+        // Pause the contract
+        await tokenExchange.setPaused(true);
+
+        // Approve the TokenExchange to transfer of 1000 of my tokens to itself
+        const approveTransaction = await shartCoin.approve(
+          tokenExchange.address,
+          numberOfTokens
+        );
+
+        // Create a trade listing on the TokenExchange
+        await assert.revert(
+          tokenExchange.createTradeListing(
+            await shartCoin.symbol(),
+            numberOfTokens,
+            tokenPrice,
+            shartCoin.address,
+            {
+              from: deployerAccount
+            }
+          )
+        );
+      });
+
+      it("should revert if the amount of tokens being deposited is zero", async function() {
+        // Approve the TokenExchange to transfer of 1000 of my tokens to itself
+        const approveTransaction = await shartCoin.approve(
+          tokenExchange.address,
+          numberOfTokens
+        );
+
+        // Create a trade listing on the TokenExchange
+        await assert.revert(
+          tokenExchange.createTradeListing(
+            await shartCoin.symbol(),
+            0,
+            tokenPrice,
+            shartCoin.address,
+            {
+              from: deployerAccount
+            }
+          )
+        );
+      });
+
+      it("should revert if the TokenListing (price) ethRate is zero", async function() {
+        // Create a trade listing on the TokenExchange
+        await assert.revert(
+          tokenExchange.createTradeListing(
+            await shartCoin.symbol(),
+            numberOfTokens,
+            0,
+            shartCoin.address,
+            {
+              from: deployerAccount
+            }
+          )
+        );
+      });
+
+      it("should revert if the ERCToken Contract has not approved the amount to transfer", async function() {
+        // Create a trade listing on the TokenExchange
+        await assert.revert(
+          tokenExchange.createTradeListing(
+            await shartCoin.symbol(),
+            numberOfTokens,
+            tokenPrice,
+            shartCoin.address,
+            {
+              from: deployerAccount
+            }
+          )
+        );
+      });
+    });
+
+    describe("When saving a tradelisting to the blockchain", async function() {
       const usdEth = toUnit("100");
       const tokenPrice = toUnit(".08"); //in ETH
       const numberOfTokens = toUnit("1000");
@@ -91,31 +178,114 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         );
       });
 
-      it("should revert if the contract is paused"); //, async function() {});
-
-      it("should revert if the amount is zero"); //, async function() {});
-
-      it("should revert if the ethRate is zero"); //, async function() {});
-
-      it(
-        "should revert if the ERCToken Contract has not approved the amount to transfer"
-      ); //, async function() {});
-
-      it.only("should create a tradeListing increase the tradeListingCount count", async function() {
-        const tradeListingCount = await tokenExchange.getTradeListingCount();
-        //assert.equal(tradeListingCount, 1);
+      it("should emit the event TradeListingDeposit", async function() {
+        // Check the event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
+        assert.eventEqual(transaction, "TradeListingDeposit", {
+          user: deployerAccount,
+          amount: numberOfTokens,
+          tradeID: 0
+        });
       });
 
       it("should create a tradeListing and be publicly accessable", async function() {
+        // Get the first tradeListing from the contract
         const tradeListing = await tokenExchange.tradeListings(0);
-        console.log(tradeListing);
+
+        // Check all of the return values
         assert.equal(tradeListing.user, deployerAccount);
-        assert.equal(tradeListing.amount, numberOfTokens);
+        assert.equal(tradeListing.symbol, await shartCoin.symbol());
+        assert.bnEqual(tradeListing.amount, numberOfTokens);
+        assert.equal(tradeListing.tokenContractAddress, shartCoin.address);
       });
 
-      it("should emit the event TradeListingDeposit", async function() {
-        // event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
-        assert.eventEqual(transaction, "TradeListingDeposit", {
+      it("should create a tradeListing increase the tradeListingCount count", async function() {
+        const tradeListingCount = await tokenExchange.getTradeListingCount();
+        assert.equal(tradeListingCount, 1);
+      });
+
+      it("should have a token balance of the amount of tokens we deposited"); //, async function() {});
+
+      it("should have reduced the balance at the depositors wallet address"); //, async function() {});
+    });
+
+    describe("When a seller wants to withdraw a deposit", async function() {
+      const usdEth = toUnit("100");
+      const tokenPrice = toUnit(".08"); //in ETH
+      const numberOfTokens = toUnit("1000");
+      let transaction;
+
+      beforeEach(async function() {
+        tokenExchange = await TokenExchange.deployed();
+        shartCoin = await ShartCoin.deployed();
+
+        // Approve the TokenExchange to transfer of 1000 of my tokens to itself
+        const approveTransaction = await shartCoin.approve(
+          tokenExchange.address,
+          numberOfTokens
+        );
+
+        // Create a trade listing on the TokenExchange
+        transaction = await tokenExchange.createTradeListing(
+          await shartCoin.symbol(),
+          numberOfTokens,
+          tokenPrice,
+          shartCoin.address,
+          {
+            from: deployerAccount
+          }
+        );
+      });
+
+      it("should revert if the contract is paused", async function() {
+        // Pause the contract
+        await tokenExchange.setPaused(true);
+
+        // Withdraw my deposit
+        await assert.revert(
+          tokenExchange.withdrawMyDepositedTokens(0, {
+            from: deployerAccount
+          })
+        );
+      });
+
+      it("should revert if the deposit does not belong to the user", async function() {
+        // Withdraw deployerAccount's deposit as account1
+        await assert.revert(
+          tokenExchange.withdrawMyDepositedTokens(0, {
+            from: account1
+          })
+        );
+      });
+
+      it("should delete the trade listing", async function() {
+        // Withdraw my deposit
+        transaction = await tokenExchange.withdrawMyDepositedTokens(0, {
+          from: deployerAccount
+        });
+
+        // Assert the tradeListing struct is empty
+        const tradeListing = await tokenExchange.tradeListings(0);
+        assert.equal(tradeListing.symbol, "");
+        assert.bnEqual(tradeListing.amount, 0);
+        assert.bnEqual(tradeListing.ethRate, 0);
+        assert.equal(tradeListing.user, ZERO_ADDRESS);
+        assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
+      });
+
+      it("should return the users tokens deposited into the contract", async function() {
+        // Withdraw my deposit
+        transaction = await tokenExchange.withdrawMyDepositedTokens(0, {
+          from: deployerAccount
+        });
+      });
+
+      it("should emit the event TradeListingWithdrawal", async function() {
+        // Withdraw my deposit
+        transaction = await tokenExchange.withdrawMyDepositedTokens(0, {
+          from: deployerAccount
+        });
+
+        assert.eventEqual(transaction, "TradeListingWithdrawal", {
           user: deployerAccount,
           amount: numberOfTokens,
           tradeID: 0
@@ -123,56 +293,121 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       });
     });
 
-    describe("When a seller wants to withdraw a deposit", async function() {
+    describe.only("When a buyer wants to execute a trade", async function() {
       const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".08");
+      const tokenPrice = toUnit(".0006"); //in ETH
       const numberOfTokens = toUnit("1000");
+      const ETHtoSend = toUnit("80000");
       let transaction;
 
       beforeEach(async function() {
         tokenExchange = await TokenExchange.deployed();
+        shartCoin = await ShartCoin.deployed();
 
-        // Create a trade listing
+        // Approve the TokenExchange to transfer of 1000 of my tokens to itself
+        const approveTransaction = await shartCoin.approve(
+          tokenExchange.address,
+          numberOfTokens
+        );
 
-        // Now withdraw it
+        // Create a trade listing on the TokenExchange
+        transaction = await tokenExchange.createTradeListing(
+          await shartCoin.symbol(),
+          numberOfTokens,
+          tokenPrice,
+          shartCoin.address,
+          {
+            from: deployerAccount
+          }
+        );
       });
 
-      it("should revert if the contract is paused"); //, async function() {});
+      it("should revert if the contract is paused", async function() {
+        // Pause the contract
+        await tokenExchange.setPaused(true);
 
-      it("should revert if the deposit does not belong to the user"); //, async function() {});
+        // Buy tokens for ETH
+        await assert.revert(
+          tokenExchange.exchangeEtherForTokens(0, {
+            from: deployerAccount,
+            value: ETHtoSend
+          })
+        );
+      });
 
-      it("should delete the trade listing"); //, async function() {});
+      it("should revert if the sender did not send enough ETH", async function() {
+        // Buy tokens without sending ETH
+        await assert.revert(
+          tokenExchange.exchangeEtherForTokens(0, {
+            from: deployerAccount,
+            value: 0
+          })
+        );
+      });
 
-      it("should return the users tokens deposited into the contract"); //, async function() {});
+      it.only("should delete the trade listing", async function() {
+        console.log("calcCostPriceInUSD");
+        let response1 = await tokenExchange.calcCostPriceInUSD.call(
+          numberOfTokens,
+          tokenPrice
+        );
+        console.log("costETH", response1.costETH.value);
 
-      it("should emit the event TradeListingWithdrawal"); //, async function() {
-      /*     assert.eventEqual(transaction, "TradeListingWithdrawal", {
-            user: owner,
-            amount: numberOfTokens,
-            tradeID: 0
-          });
+        //let response2 = await tokenExchange.getListingCostPriceInUSD.call(0);
+        //console.log(response2);
+        return;
+
+        let response3 = await tokenExchange.callOracle();
+        console.log(response3);
+
+        // Buy tokens for ETH
+        transaction = await tokenExchange.exchangeEtherForTokens(0, {
+          from: deployerAccount,
+          value: ETHtoSend
         });
-      */
-      it("should allow user to exchange ERC20 Tokens for ETH"); //, async function() {});
-    });
 
-    describe("When a buyer wants to execute a trade", async function() {
-      beforeEach(async function() {
-        // call tokenExchange.createTradeListing
-        // call tokenExchange.exchangeEtherForTokens
+        // Assert the tradeListing struct is empty
+        const tradeListing = await tokenExchange.tradeListings(0);
+        assert.equal(tradeListing.symbol, "");
+        assert.bnEqual(tradeListing.amount, 0);
+        assert.bnEqual(tradeListing.ethRate, 0);
+        assert.equal(tradeListing.user, ZERO_ADDRESS);
+        assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
       });
 
-      it("should revert if the contract is paused"); //, async function() {});
+      it("should send the buyer the correct amount of tokens", async function() {
+        // Buy tokens for ETH
+        await tokenExchange.exchangeEtherForTokens(0, {
+          from: deployerAccount,
+          value: ETHtoSend
+        });
+      });
 
-      it("should revert if the sender did not send enough ETH"); //, async function() {});
+      it("should send the buyer the correct amount of tokens", async function() {
+        // Buy tokens for ETH
+        await tokenExchange.exchangeEtherForTokens(0, {
+          from: deployerAccount,
+          value: ETHtoSend
+        });
+      });
 
-      it("should delete the trade listing"); //, async function() {});
+      it("should send the seller the correct amount of ETH"); //, async function() {});
 
-      it("should send the buyer the correct amount of tokens"); //, async function() {});
+      it("should emit the Exchange event", async function() {
+        // Buy tokens for ETH
+        transaction = await tokenExchange.exchangeEtherForTokens(0, {
+          from: deployerAccount,
+          value: ETHtoSend
+        });
 
-      it("should send the user the correct amount of ETH"); //, async function() {});
-
-      it("should emit the Exchange event"); //, async function() {});
+        // Assert event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
+        assert.eventEqual(transaction, "Exchange", {
+          fromSymbol: "ETH",
+          fromAmount: ETHtoSend,
+          toSymbol: await shartCoin.symbol(),
+          toAmount: numberOfTokens
+        });
+      });
     });
   });
 });
