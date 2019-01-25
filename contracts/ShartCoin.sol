@@ -17,7 +17,7 @@ contract ShartCoin is ERC20, ERC20Detailed {
  /**
      * @dev Constructor that gives msg.sender all of existing tokens.
      */
-    constructor () public ERC20Detailed("ERC20Detailed", "SHT", DECIMALS) {
+    constructor () public ERC20Detailed("ShartCoin", "SHT", DECIMALS) {
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 

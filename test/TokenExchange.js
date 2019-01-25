@@ -8,11 +8,12 @@ const {
 } = require("../utils/testUtils");
 
 const TokenExchange = artifacts.require("TokenExchange");
+const ShartCoin = artifacts.require("ShartCoin");
+
+const ZERO_ADDRESS = "0x" + "0".repeat(40);
 
 contract("TokenExchange - Test contract deployment", function(accounts) {
   const [deployerAccount, account1, account2, account3, account4] = accounts;
-
-  const ZERO_ADDRESS = "0x" + "0".repeat(40);
 
   let tokenExchange;
 
@@ -62,27 +63,30 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       assert.equal(_priceETHUSD, priceETHUSD);
     });
 
-    describe("When a seller wants to create a trade", async function() {
+    describe.only("When a seller wants to create a trade", async function() {
       const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".08");
+      const tokenPrice = toUnit(".08"); //in ETH
       const numberOfTokens = toUnit("1000");
       let transaction;
 
       beforeEach(async function() {
         tokenExchange = await TokenExchange.deployed();
+        shartCoin = await ShartCoin.deployed();
 
-        // Deploy mintable ERC20 Contract
-        const shartCoinAddress = ZERO_ADDRESS;
-        // Approve transfer of 1000
+        // Approve the TokenExchange to transfer of 1000 of my tokens to itself
+        const approveTransaction = await shartCoin.approve(
+          tokenExchange.address,
+          numberOfTokens
+        );
 
-        // Create a trade listing
+        // Create a trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          "SHT",
+          await shartCoin.symbol(),
           numberOfTokens,
           tokenPrice,
-          shartCoinAddress,
+          shartCoin.address,
           {
-            from: owner
+            from: deployerAccount
           }
         );
       });
@@ -97,16 +101,25 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         "should revert if the ERCToken Contract has not approved the amount to transfer"
       ); //, async function() {});
 
-      it("should create a tradeListing and store it"); //, async function() {});
+      it.only("should create a tradeListing increase the tradeListingCount count", async function() {
+        const tradeListingCount = await tokenExchange.getTradeListingCount();
+        assert.equal(tradeListingCount, 1);
+      });
 
-      it("should emit the event TradeListingDeposit"); //, async function() {});
-      // event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
-      /* 
+      it("should create a tradeListing and be publicly accessable", async function() {
+        const tradeListing = await tokenExchange.tradeListings(0);
+        console.log(tradeListing);
+        assert.equal(tradeListing.user, deployerAccount);
+        assert.equal(tradeListing.amount, numberOfTokens);
+      });
+
+      it("should emit the event TradeListingDeposit", async function() {
+        // event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
         assert.eventEqual(transaction, "TradeListingDeposit", {
-          user: owner,
+          user: deployerAccount,
           amount: numberOfTokens
         });
-         */
+      });
     });
 
     describe("When a seller wants to withdraw a deposit", async function() {

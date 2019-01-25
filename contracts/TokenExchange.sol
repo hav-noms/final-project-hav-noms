@@ -12,9 +12,9 @@ import "./ETHPriceTicker.sol";
 /**
  * @title A simple decentralized Peer 2 Peer Token exchanger
  * @notice Allows people to list their alt coins to sell for ETH
- * 
+ * Buyer choose a listing and send ETH to the contract which will 
+ * send the seller the ETH and the buyer the tokens
  */
-//contract TokenExchange is Proxyable, Mortal, Pausable, ETHPriceTicker {
 contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     using SafeMath for uint;
     using SafeDecimalMath for uint;
@@ -73,13 +73,13 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     }
 
     //-----------------------------------------------------------------
-    // Public View Functions
+    // Public Functions
     //-----------------------------------------------------------------
  
     /**
      * @notice Get the total number of tokens for he DApp to iterate
      */
-    function getAvailableListingCount() 
+    function getTradeListingCount() 
         optionalProxy
         public 
         returns(uint) 
