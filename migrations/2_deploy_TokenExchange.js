@@ -68,7 +68,8 @@ module.exports = async function(deployer, network, accounts) {
   // ShartCoin
   // ----------------
   console.log("Deploying Test ERC20 Token...");
-  await deployer.deploy(ShartCoin, { from: deployerAccount });
+  const shartCoin = await deployer.deploy(ShartCoin, { from: deployerAccount });
+  console.log("ShartCoin.address:", shartCoin.address);
 
   // ----------------
   // TokenExchangeState
@@ -109,7 +110,13 @@ module.exports = async function(deployer, network, accounts) {
       gas: 8000000
     }
   );
-  console.log(" Successfully deployed all contracts:");
+  console.log("tokenExchange.address:", tokenExchange.address);
+  console.log("Successfully deployed all contracts:");
+
+  // ----------------
+  // CONFIGURE ENVIRONMENT
+  // ----------------
+  console.log("Wiring up all contracts together");
 
   // ----------------
   // TokenExchangeState
@@ -123,5 +130,5 @@ module.exports = async function(deployer, network, accounts) {
   console.log("Configuring Proxy...");
   tokenExchangeProxy.setTarget(tokenExchange.address);
 
-  console.log(" Successfully Configured all contracts:");
+  console.log("Successfully Configured all contracts");
 };
