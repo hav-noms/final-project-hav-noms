@@ -11,6 +11,7 @@ yarn-error.log
 
 # Our environment settings
 *.env
+*.secret
 
 # Build artifacts
 flattened-contracts/

@@ -1,10 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-//import "./SafeDecimalMath.sol";
-import "./State.sol";
+import "./EternalStorage.sol";
 
-contract TokenExchangeState is State {
+contract TokenExchangeState is EternalStorage {
 
     /**
      * @dev Constructor
