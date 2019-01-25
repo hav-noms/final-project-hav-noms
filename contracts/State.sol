@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-//import "./Ownable.sol";
 
 /**
  * @title Owner functions to set the Associated Contract of the state that we store. 

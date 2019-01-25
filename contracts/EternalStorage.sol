@@ -36,11 +36,11 @@ contract EternalStorage is State {
 
     mapping(bytes32 => string) StringStorage;
 
-    function getStringValue(bytes32 record) external view returns (string){
+    function getStringValue(bytes32 record) external view returns (string memory){
         return StringStorage[record];
     }
 
-    function setStringValue(bytes32 record, string value) external
+    function setStringValue(bytes32 record, string calldata value) external
     onlyAssociatedContract
     {
         StringStorage[record] = value;
@@ -72,11 +72,11 @@ contract EternalStorage is State {
 
     mapping(bytes32 => bytes) BytesStorage;
 
-    function getBytesValue(bytes32 record) external view returns (bytes){
+    function getBytesValue(bytes32 record) external view returns (bytes memory){
         return BytesStorage[record];
     }
 
-    function setBytesValue(bytes32 record, bytes value) external
+    function setBytesValue(bytes32 record, bytes calldata value) external
     onlyAssociatedContract
     {
         BytesStorage[record] = value;
