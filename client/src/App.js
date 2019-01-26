@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import TokenExchangeContract from "./contracts/TokenExchange.json";
+import TokenExchangeContract from "../../contracts/TokenExchange.json";
 import getWeb3 from "./utils/getWeb3";
 import { ethers, Contract } from "ethers";
 import P2PTokenExchange from "./pages/p2pTokenExchange";
 
-const SMART_CONTRACT_ADDR = "0x7662cC9FDc10337388438Ac474DA991C9b99A99A";
+const SMART_CONTRACT_ADDR = "0x39A2461b18344d56eB69Ae171560dE27A71Ae599";
 
 class App extends Component {
   state = { accounts: null, contract: null };

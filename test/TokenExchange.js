@@ -195,9 +195,9 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       });
 
       it("should emit the event TradeListingDeposit", async function() {
-        // Check the event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
+        // Check the event TradeListingDeposit(address indexed seller, uint amount, uint indexed tradeID);
         assert.eventEqual(transaction, "TradeListingDeposit", {
-          user: deployerAccount,
+          seller: deployerAccount,
           amount: numberOfTokens,
           tradeID: 0
         });
@@ -208,7 +208,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         const tradeListing = await tokenExchange.tradeListings(0);
 
         // Check all of the return values
-        assert.equal(tradeListing.user, deployerAccount);
+        assert.equal(tradeListing.seller, deployerAccount);
         assert.equal(tradeListing.symbol, await shartCoin.symbol());
         assert.bnEqual(tradeListing.amount, numberOfTokens);
         assert.bnEqual(tradeListing.ethRate, tokenPriceInETH);
@@ -285,7 +285,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         );
       });
 
-      it("should revert if the deposit does not belong to the user", async function() {
+      it("should revert if the deposit does not belong to the seller", async function() {
         // Withdraw deployerAccount's deposit as account1
         await assert.revert(
           tokenExchange.withdrawMyDepositedTokens(0, {
@@ -306,11 +306,11 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
         assert.bnEqual(tradeListing.totalPrice, 0);
-        assert.equal(tradeListing.user, ZERO_ADDRESS);
+        assert.equal(tradeListing.seller, ZERO_ADDRESS);
         assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
       });
 
-      it("should return the users tokens deposited into the contract", async function() {
+      it("should return the sellers tokens deposited into the contract", async function() {
         // Withdraw my deposit
         transaction = await tokenExchange.withdrawMyDepositedTokens(0, {
           from: deployerAccount
@@ -324,7 +324,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         });
 
         assert.eventEqual(transaction, "TradeListingWithdrawal", {
-          user: deployerAccount,
+          seller: deployerAccount,
           amount: numberOfTokens,
           tradeID: 0
         });
@@ -401,7 +401,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
         //assert.bnEqual(tradeListing.totalPrice, 0);
-        assert.equal(tradeListing.user, ZERO_ADDRESS);
+        assert.equal(tradeListing.seller, ZERO_ADDRESS);
         assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
       });
 

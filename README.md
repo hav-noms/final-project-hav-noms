@@ -65,7 +65,9 @@ Requirements:
 ### User Interface
 
 - [x] Run the dapp on a development server locally for testing and grading.
+  - [ ] Testing on Ropsten;
   - [ ] Testing on Rinkeby;
+  - [ ] Testing on Kovan;
 - [ ] You should be able to visit a URL (can be localhost) and interact with the application:
   - [ ] Display the current account;
   - [ ] Sign transactions using MetaMask;

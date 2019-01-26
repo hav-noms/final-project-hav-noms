@@ -24,10 +24,10 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     using Address for address;
     using Address for address payable;
 
-    /* Stores trade listings from users. */
+    /* Stores trade listings from sellers. */
     struct TradeListing {
-        // The user that made the token deposit whio wants to receive ETH
-        address payable user;
+        // The user that made the token deposit who wants to sell their tokens for ETH
+        address payable seller;
         // The token symbol
         string symbol;
         // The amount that they deposited for trading
@@ -50,10 +50,10 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     /* Reentrancy Preventer bool for noReentrancy modifer */
     bool reentrancyLock;
 
-    /* Mapping all users tradeListings by ID */
+    /* Mapping all TradeListings by ID */
     mapping(uint => TradeListing) public tradeListings;
 
-    /* Array of IDs */
+    /* Shadow array of IDs */
     uint[] public tradeID;
     
     /**
@@ -102,19 +102,22 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         view
         returns(
             uint[] memory ids, 
-            string[] memory symbols, 
+            bytes4[] memory symbols, 
             uint[] memory amounts, 
             uint[] memory ethRates, 
-            uint[] memory totalPrices) 
+            uint[] memory totalPrices,
+            address[] memory contracts,
+            address[] memory seller) 
     {
         uint tradeCount = tradeID.length;
         for (uint i = 0; i < tradeCount; i++) {
             if (tradeListings[i].totalPrice != 0) {
                 ids[i] = i; 
-                symbols[i] = tradeListings[i].symbol;      
+                //symbols[i] = bytes4(tradeListings[i].symbol);      
                 amounts[i] = tradeListings[i].amount;      
                 ethRates[i] = tradeListings[i].ethRate;      
-                totalPrices[i] = tradeListings[i].totalPrice;   
+                totalPrices[i] = tradeListings[i].totalPrice; 
+                contracts[i] = tradeListings[i].tokenContractAddress;  
             }   
         }
     }
@@ -125,11 +128,13 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     function getTrade(uint id) 
         public 
         view 
-    returns(string memory symbol, uint amount, uint ethRate, uint totalPrice) {
+    returns(string memory symbol, uint amount, uint ethRate, uint totalPrice, address tokenContractAddress, address seller) {
         symbol = tradeListings[id].symbol; 
         amount = tradeListings[id].amount;
         ethRate = tradeListings[id].ethRate;
         totalPrice = tradeListings[id].totalPrice;
+        tokenContractAddress = tradeListings[id].tokenContractAddress;
+        seller = tradeListings[id].seller;
     }
 
     //-----------------------------------------------------------------
@@ -140,7 +145,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
      * @notice createTradeListing: Allows users to deposit tokens via the ERC20 approve / transferFrom workflow
      * @param symbol The ERC20 token symbol
      * @param amount The amount of tokens you wish to deposit (must have been approved first)
-     * @param ethRate The price of ETH the user wants per token
+     * @param ethRate The price of ETH the seller wants per token
      * @param tokenContract The address of the token contract
      */
     function createTradeListing(
@@ -162,7 +167,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // Check the tokenContract address provided is a contract or the transfer is bogus
         require(tokenContract.isContract(), "The tokenContract address you provided is not a contract? Did you make a mistake?");
 
-        // Grab the users tokens from its contract. User must do the approve first in the DApp 
+        // Grab the seller tokens from its contract. Seller must call approve() first
         require(IERC20(tokenContract).transferFrom(messageSender, address(this), amount));
 
         // Get a unique ID. Just using a basic shadow array to use uints as the IDs so 
@@ -174,7 +179,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // Create a tradeListing
         uint totalPrice = amount.multiplyDecimal(ethRate);
         tradeListings[newTradeID] = TradeListing({ 
-            user: messageSender, 
+            seller: messageSender, 
             symbol: symbol,
             amount: amount, 
             ethRate: ethRate, 
@@ -188,7 +193,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     }
 
     /**
-     * @notice Allow users to withdraw their tokens and delete their trade listing
+     * @notice Allow sellers to withdraw their tokens and delete their trade listing
      * @param listingID ID of the trade listing
      */
     function withdrawMyDepositedTokens(uint listingID)
@@ -200,14 +205,14 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         TradeListing memory trade = tradeListings[listingID];
 
         // Make sure we're trying to withdraw our listing
-        require(trade.user == messageSender, "Thats not your deposit to withdraw");
+        require(trade.seller == messageSender, "Thats not your deposit to withdraw");
 
         // Remove the trade listing from our storage
         removeTradeListing(listingID);
         delete tradeListings[listingID];
 
         // Send their tokens back to them
-        require(IERC20(trade.tokenContractAddress).transfer(trade.user, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
+        require(IERC20(trade.tokenContractAddress).transfer(trade.seller, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
 
         // Tell the DApps there was a withdrawal
         emit TradeListingWithdrawal(messageSender, trade.amount, listingID);
@@ -232,7 +237,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // Revert if its not found
         require(trade.totalPrice != 0, "The Trade listingID you've requested does not exist");
 
-        // Make sure the user has sent enough ETH to cover the trade
+        // Make sure the buyer has sent enough ETH to cover the trade
         require(msg.value >= trade.totalPrice, "You have not sent enough ETH to cover the cost of this trade"); 
 
         // Delete the deposit
@@ -242,7 +247,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         require(IERC20(trade.tokenContractAddress).transfer(messageSender, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
 
         // Send the ETH to the seller
-        trade.user.transfer(trade.totalPrice); // dont send the msg.value as we may need to refund some to the buyer
+        trade.seller.transfer(trade.totalPrice); // dont send the msg.value as we may need to refund some to the buyer
 
         // Tell the DApps there was an Exchange
         emit Exchange("ETH", trade.totalPrice, trade.symbol, trade.amount);
@@ -302,7 +307,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
         // Clear struct values in mapping but the one reverting the EVM
         tradeListings[listingID].symbol = '';
-        tradeListings[listingID].user = address(0);
+        tradeListings[listingID].seller = address(0);
         tradeListings[listingID].tokenContractAddress = address(0);
         tradeListings[listingID].amount = 0;
         tradeListings[listingID].ethRate = 0;
@@ -324,7 +329,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         _;
         TradeListing memory trade = tradeListings[listingID];
         uint amountToRefund = msg.value - trade.totalPrice;
-        trade.user.transfer(amountToRefund);
+        messageSender.transfer(amountToRefund);
     }
 
     /** 
@@ -347,7 +352,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     /**
      * @notice emit when a seller has successfully deposited tokens and created a trade listing 
      */
-    event TradeListingDeposit(address indexed user, uint amount, uint tradeID);
+    event TradeListingDeposit(address indexed seller, uint amount, uint tradeID);
    
     /**
      * @notice emit when a buyer has successfully bought a sellers tokens with ETH
@@ -357,7 +362,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     /**
      * @notice emit when a seller has successfuly withdrawn their tokens and removes the trade listing
      */
-    event TradeListingWithdrawal(address indexed user, uint amount, uint tradeID);
+    event TradeListingWithdrawal(address indexed seller, uint amount, uint tradeID);
     
 
     //-----------------------------------------------------------------
