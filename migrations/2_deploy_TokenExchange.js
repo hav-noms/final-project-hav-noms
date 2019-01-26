@@ -70,6 +70,7 @@ module.exports = async function(deployer, network, accounts) {
   console.log("Deploying Test ERC20 Token...");
   const shartCoin = await deployer.deploy(ShartCoin, { from: deployerAccount });
   console.log("ShartCoin.address:", shartCoin.address);
+  console.log("deployerAccount:", deployerAccount);
 
   // ----------------
   // TokenExchangeState

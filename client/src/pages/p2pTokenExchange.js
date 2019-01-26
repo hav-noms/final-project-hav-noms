@@ -24,28 +24,36 @@ class P2PTokenExchange extends Component {
 
   renderPageContent() {
     const { activeView } = this.state;
-    const { contract, accounts } = this.props;
+    const { contract, accounts, signer, erc20DetailedABI } = this.props;
     switch (activeView) {
       case "index":
-        return <SellOrders contract={contract} accounts={accounts} />;
+        return (
+          <SellOrders
+            contract={contract}
+            accounts={accounts}
+            signer={signer}
+            erc20DetailedABI={erc20DetailedABI}
+          />
+        );
       default:
         return <SellOrders />;
     }
   }
 
   render() {
-    const { accounts } = this.props;
+    const { contract, signer, accounts, erc20DetailedABI } = this.props;
     return (
       <div className="p2pTokenExchange">
         <h1>Decentralized p2p Token Exchange</h1>
-        <div>
+        <h3>Your address: {accounts[0]}</h3>
+        {/* <div>
           <button onClick={this.setCurrentView("index")}>
             Tokens For Sale
           </button>
           <button onClick={this.setCurrentView("createListing")}>
             Sell Your Tokes
           </button>
-        </div>
+        </div> */}
         {this.renderPageContent()}
       </div>
     );

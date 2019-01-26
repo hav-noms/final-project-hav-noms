@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import TokenExchangeContract from "../../contracts/TokenExchange.json";
+import TokenExchangeContract from "./contracts/TokenExchange.json";
+import ERC20Detailed from "./contracts/ERC20Detailed.json";
 import getWeb3 from "./utils/getWeb3";
 import { ethers, Contract } from "ethers";
 import P2PTokenExchange from "./pages/p2pTokenExchange";
 
-const SMART_CONTRACT_ADDR = "0x39A2461b18344d56eB69Ae171560dE27A71Ae599";
+const SMART_CONTRACT_ADDR = "0xA09ba9173F9a3CAa4574F97044DF886D50C4Dcb3";
 
 class App extends Component {
   state = { accounts: null, contract: null };
@@ -25,6 +26,7 @@ class App extends Component {
       const accounts = await web3Provider.listAccounts();
       this.setState({
         contract,
+        signer,
         accounts
       });
     } catch (err) {
@@ -33,7 +35,7 @@ class App extends Component {
   };
 
   render() {
-    const { contract, accounts } = this.state;
+    const { contract, signer, accounts } = this.state;
     if (!accounts || !contract) {
       return (
         <div style={{ textAlign: "center" }}>
@@ -41,7 +43,14 @@ class App extends Component {
         </div>
       );
     }
-    return <P2PTokenExchange contract={contract} accounts={accounts} />;
+    return (
+      <P2PTokenExchange
+        contract={contract}
+        signer={signer}
+        erc20DetailedABI={ERC20Detailed.abi}
+        accounts={accounts}
+      />
+    );
   }
 }
 
