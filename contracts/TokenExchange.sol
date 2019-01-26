@@ -2,7 +2,8 @@ pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "./SafeDecimalMath.sol";
+//import "./SafeDecimalMath.sol";
+import "./Address.sol";
 import "./Mortal.sol";
 import "./Pausable.sol";
 import "./Proxyable.sol";
@@ -17,7 +18,11 @@ import "./ETHPriceTicker.sol";
  */
 contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     using SafeMath for uint;
-    using SafeDecimalMath for uint;
+    //using SafeDecimalMath for uint;
+
+    /* Add our isContract() utility function to the Address types */
+    using Address for address;
+    using Address for address payable;
 
     /* Stores trade listings from users. */
     struct TradeListing {
@@ -113,6 +118,9 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
         // Check tokens have a price
         require(ethRate > 0, "It's highly doubtfull you want these to be free");
+
+        // Check the tokenContract address provided is a contract or the transfer is bogus
+        require(tokenContract.isContract(), "The tokenContract address you provided is not a contract? Did you make a mistake?");
 
         // Grab the users tokens from its contract. User must do the approve first in the DApp 
         require(IERC20(tokenContract).transferFrom(messageSender, address(this), amount));

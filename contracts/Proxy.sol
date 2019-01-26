@@ -97,7 +97,8 @@ contract Proxy is Ownable {
         // Must send the messageSender explicitly since we are using CALL rather than DELEGATECALL.
         target.setMessageSender(msg.sender);
 
-        //Forward all call data to the target
+        // Forward all call data to the target
+        // solhint-disable-next-line no-inline-assembly
         assembly {
             let free_ptr := mload(0x40)
             calldatacopy(free_ptr, 0, calldatasize)
@@ -116,8 +117,7 @@ contract Proxy is Ownable {
     //-----------------------------------------------------------------
 
     /**
-    * @dev Only the proxyable target contract may call this function
-    * @notice The msg.sender or the caller of the function
+    * @notice Only the proxyable target contract may call this function
     */
     modifier onlyTarget {
         require(Proxyable(msg.sender) == target, "Must be proxy target");

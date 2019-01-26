@@ -1,11 +1,13 @@
 # P2P Token Exchange
 
-A simple Peer 2 Peer ERC20 Token exchange where;
+[![Build Status](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor.svg?branch=master)](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor)
 
-- sellers deposit tokens to trade and create a trade listing.
-- buyers pay ETH for the tokens.
+A simple Peer 2 Peer Token exchange where;
 
-This project focuses on the best patterns and practices implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary Smart contract a lot of focus of the solution is the incorporation of important ethereum design patterns, protection mechanisms and the stretch goals that would be used in a real world implementation.
+- sellers create a trade listing, depositing their ERC20 tokens to trade into the contract.
+- buyers pay ETH for the tokens and both actors are paid their coins.
+
+This project focuses on the best patterns and practices implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary smart contract a lot of focus of the solution is the incorporation of important ethereum design patterns, protection mechanisms and the stretch goals that would be used in a real world decentralized solution.
 
 ## User Journey
 
@@ -16,8 +18,6 @@ This project focuses on the best patterns and practices implementation from the 
 - Withdraw your trade listing and have your tokens returned to you
 
 ## Setup
-
-Requirements:
 
 Requirements:
 
