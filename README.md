@@ -5,7 +5,7 @@ A simple Peer 2 Peer Token exchange where;
 - sellers create a trade listing, depositing their ERC20 tokens to trade into the contract.
 - buyers pay ETH for the tokens and both actors are paid their coins.
 
-This project focuses on the best patterns and practices implementation from the Consensys academy bootcamp. Rather than focusing on an arbitrary smart contract a lot of focus of the solution is the incorporation of important ethereum design patterns, protection mechanisms and the stretch goals that would be used in a real world decentralized solution.
+This project focuses on the best patterns and practices implementation from the Consensys academy bootcamp. A lot of focus of the solution is the incorporation of important ethereum design patterns, protection mechanisms and the stretch goals that would be used in a real world decentralized solution. The project evaluation checklist provided below lists the completed tasks.
 
 ## User Journey
 
