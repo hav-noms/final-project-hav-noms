@@ -8,7 +8,14 @@
   list-style: none;
 }
 
-
 .listIsEmpty {
-	font-style: italic;
+  font-style: italic;
+}
+
+.tradesTable {
+  width: 100%;
+}
+
+.tradesTable td {
+  text-align: center;
 }

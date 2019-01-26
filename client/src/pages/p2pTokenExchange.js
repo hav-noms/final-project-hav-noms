@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Stores from "../components/stores";
+import SellOrders from "../components/sellOrders";
 
 import "./p2pTokenExchange.css";
 
@@ -7,21 +7,13 @@ class P2PTokenExchange extends Component {
   constructor() {
     super();
     this.state = {
-      activeView: "index",
-      isStoreOwner: false,
-      isAdmin: false
+      activeView: "index"
     };
     this.setCurrentView = this.setCurrentView.bind(this);
   }
 
   async componentDidMount() {
     const { contract, accounts } = this.props;
-    const [isAdmin, isStoreOwner] = await Promise.all([
-      contract.administrators(accounts[0]),
-      contract.storeOwners(accounts[0])
-    ]);
-
-    this.state({ isStoreOwner, isAdmin });
   }
 
   setCurrentView(view) {
@@ -35,9 +27,9 @@ class P2PTokenExchange extends Component {
     const { contract, accounts } = this.props;
     switch (activeView) {
       case "index":
-        return <Stores contract={contract} accounts={accounts} />;
+        return <SellOrders contract={contract} accounts={accounts} />;
       default:
-        return <Stores />;
+        return <SellOrders />;
     }
   }
 
@@ -47,8 +39,12 @@ class P2PTokenExchange extends Component {
       <div className="p2pTokenExchange">
         <h1>Decentralized p2p Token Exchange</h1>
         <div>
-          <button onClick={this.setCurrentView("index")}>Index</button>
-          <button onClick={this.setCurrentView("admin")}>Admin</button>
+          <button onClick={this.setCurrentView("index")}>
+            Tokens For Sale
+          </button>
+          <button onClick={this.setCurrentView("createListing")}>
+            Sell Your Tokes
+          </button>
         </div>
         {this.renderPageContent()}
       </div>

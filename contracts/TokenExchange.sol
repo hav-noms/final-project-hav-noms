@@ -93,6 +93,45 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         return tradeID.length;
     }
 
+    /**
+     * @notice Return the list of Trades
+     * @dev must return seperate arrays with the datatypes and the index is the row number
+     */
+    function getTradeList() 
+        public 
+        view
+        returns(
+            uint[] memory ids, 
+            string[] memory symbols, 
+            uint[] memory amounts, 
+            uint[] memory ethRates, 
+            uint[] memory totalPrices) 
+    {
+        uint tradeCount = tradeID.length;
+        for (uint i = 0; i < tradeCount; i++) {
+            if (tradeListings[i].totalPrice != 0) {
+                ids[i] = i; 
+                symbols[i] = tradeListings[i].symbol;      
+                amounts[i] = tradeListings[i].amount;      
+                ethRates[i] = tradeListings[i].ethRate;      
+                totalPrices[i] = tradeListings[i].totalPrice;   
+            }   
+        }
+    }
+
+    /**
+     * @notice Return a single Trade
+     */
+    function getTrade(uint id) 
+        public 
+        view 
+    returns(string memory symbol, uint amount, uint ethRate, uint totalPrice) {
+        symbol = tradeListings[id].symbol; 
+        amount = tradeListings[id].amount;
+        ethRate = tradeListings[id].ethRate;
+        totalPrice = tradeListings[id].totalPrice;
+    }
+
     //-----------------------------------------------------------------
     // Public Mutative Functions
     //-----------------------------------------------------------------
