@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-//import "./SafeDecimalMath.sol";
+import "./SafeDecimalMath.sol";
 import "./Address.sol";
 import "./Mortal.sol";
 import "./Pausable.sol";
@@ -18,7 +18,7 @@ import "./ETHPriceTicker.sol";
  */
 contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     using SafeMath for uint;
-    //using SafeDecimalMath for uint;
+    using SafeDecimalMath for uint;
 
     /* Add our isContract() utility function to the Address types */
     using Address for address;
@@ -34,6 +34,8 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         uint amount;
         // The ETH rate the person wants to sell their token for
         uint ethRate;
+        // The total cost in ETH
+        uint totalPrice;
         // The contract address of the token being sold
         address tokenContractAddress;
     }
@@ -69,7 +71,6 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         Mortal(_selfDestructBeneficiary)
         Pausable()
         ETHPriceTicker()
-        optionalProxy
         public
     {
         externalState = _externalState;
@@ -125,16 +126,20 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // Grab the users tokens from its contract. User must do the approve first in the DApp 
         require(IERC20(tokenContract).transferFrom(messageSender, address(this), amount));
 
-        // Get a unique ID
+        // Get a unique ID. Just using a basic shadow array to use uints as the IDs so 
+        // we can simply iterate the mapping for the list of trades. There are better ways 
+        // to do this beyond the scope of this project requirements. 
         uint newTradeID = tradeID.length; 
         tradeID.push(newTradeID);
 
         // Create a tradeListing
+        uint totalPrice = amount.multiplyDecimal(ethRate);
         tradeListings[newTradeID] = TradeListing({ 
             user: messageSender, 
             symbol: symbol,
             amount: amount, 
             ethRate: ethRate, 
+            totalPrice: totalPrice,
             tokenContractAddress: tokenContract});
         
         // Tell the DApps we have a new trade listed
@@ -158,11 +163,12 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // Make sure we're trying to withdraw our listing
         require(trade.user == messageSender, "Thats not your deposit to withdraw");
 
-        // Send their tokens back to them
-        IERC20(trade.tokenContractAddress).transfer(trade.user, trade.amount);
-
-        // Remove them from our storage
+        // Remove the trade listing from our storage
         removeTradeListing(listingID);
+        delete tradeListings[listingID];
+
+        // Send their tokens back to them
+        require(IERC20(trade.tokenContractAddress).transfer(trade.user, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
 
         // Tell the DApps there was a withdrawal
         emit TradeListingWithdrawal(messageSender, trade.amount, listingID);
@@ -185,69 +191,45 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         TradeListing memory trade = tradeListings[listingID];
 
         // Revert if its not found
-        require(trade.amount != 0, "The Trade listingID you've requested does not exist");
+        require(trade.totalPrice != 0, "The Trade listingID you've requested does not exist");
 
         // Make sure the user has sent enough ETH to cover the trade
-        uint tokenCost = trade.amount.mul(trade.ethRate);
-        emit ListingPriceQuery(tokenCost, listingID);
-        require(msg.value >= tokenCost, "You have not sent enough ETH to cover the cost of this trade"); 
+        require(msg.value >= trade.totalPrice, "You have not sent enough ETH to cover the cost of this trade"); 
 
-        // Looks like we can fullfill this exchange
+        // Delete the deposit
+        removeTradeListing(listingID); // @dev to prevent we have a noReentrancy modifier
 
-        // Delete the deposit to prevent a reentrant attack
-        removeTradeListing(listingID);
-        
-        // Send the tokens to the buyer
-        IERC20(trade.tokenContractAddress).transfer(messageSender, trade.amount);
+        // Send the ERC20 tokens to the buyer
+        require(IERC20(trade.tokenContractAddress).transfer(messageSender, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
 
         // Send the ETH to the seller
-        trade.user.transfer(tokenCost);
+        trade.user.transfer(trade.totalPrice); // dont send the msg.value as we may need to refund some to the buyer
 
         // Tell the DApps there was an Exchange
-        emit Exchange("ETH", tokenCost, trade.symbol, trade.amount);
+        emit Exchange("ETH", trade.totalPrice, trade.symbol, trade.amount);
     }
 
-    function getListingCostPriceInUSD(uint listingID)   
+    function getTradeCostPriceInUSD(uint listingID)   
         optionalProxy
         public 
-        returns (uint costETH, uint costUSD)
+        returns (uint costUSD)
     {
         emit Loguint("listingID arg", listingID);
         // Find the TokenDeposit by depositID in our mapping 
         TradeListing memory trade = tradeListings[listingID];
+
         // Revert if its not found
         require(trade.amount != 0, "The Trade listingID you've requested does not exist");
 
-        emit Loguint("trade.amount", trade.amount);
+        emit Loguint("trade.totalPrice", trade.totalPrice);
 
         emit LogString("call updateEthPrice","");
         // Get the oracle to get the latest price
         //updateEthPrice();
 
-        // Calculate the cost in ETH to buy this trade
-        costETH = trade.amount.mul(trade.ethRate);
-        emit Loguint("costETH", costETH);
-
         // Return the price in USD
-        costUSD = costETH.mul(parseInt(priceETHUSD));
-        emit Loguint("costUSD", costUSD);
-    }
-
-    function calcCostPriceInUSD(uint amount, uint rate)   
-        optionalProxy
-        public 
-        returns (uint costETH, uint costUSD)
-    {
-        emit Loguint("rate arg", rate);
-
-        emit Loguint("amount arg", amount);
-
-        // Calculate the cost in ETH to buy this trade
-        costETH = amount.mul(rate);
-        emit Loguint("costETH", costETH);
-
-        // Return the price in USD
-        costUSD = costETH.mul(parseInt(priceETHUSD));
+        costUSD = trade.totalPrice.multiplyDecimal(parseInt(priceETHUSD));
+        
         emit Loguint("costUSD", costUSD);
     }
 
@@ -256,8 +238,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         public 
         returns (bool)
     {
-        emit LogString("call updateEthPrice","");
-        updateEthPrice();
+        update();
         emit LogString("updateEthPrice called", "");
         return true;
     }
@@ -277,7 +258,16 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
     function removeTradeListing(uint listingID) internal {
         // Remove struct from mapping
-        delete tradeListings[listingID];
+        // delete mapping[key] doesnt actually delete the struct it just clears out all the values
+        //delete tradeListings[listingID]; was causing VM error and reverting
+
+        // Clear struct values in mapping but the one reverting the EVM
+        tradeListings[listingID].symbol = '';
+        tradeListings[listingID].user = address(0);
+        tradeListings[listingID].tokenContractAddress = address(0);
+        tradeListings[listingID].amount = 0;
+        tradeListings[listingID].ethRate = 0;
+        //tradeListings[listingID].totalPrice = 0; // @dev TODO the EVM reverts if I attempt to change this value. Why?
 
         // Remove ID from array so its an empty spot
         delete tradeID[listingID];
@@ -287,12 +277,14 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     // Modifiers
     //-----------------------------------------------------------------
 
+    /**
+     * @notice Refund the buyer any extra ETH they sent
+     */
     modifier refund(uint listingID) {
         //refund them after pay for item (why it is before, _ checks for logic before func)
         _;
         TradeListing memory trade = tradeListings[listingID];
-        uint _price = trade.amount.mul(trade.ethRate);
-        uint amountToRefund = msg.value - _price;
+        uint amountToRefund = msg.value - trade.totalPrice;
         trade.user.transfer(amountToRefund);
     }
 
@@ -312,11 +304,30 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     //-----------------------------------------------------------------
     // Events
     //-----------------------------------------------------------------
-    event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
-    event TradeListingDeposit(address indexed user, uint amount, uint indexed tradeID);
-    event TradeListingWithdrawal(address indexed user, uint amount, uint indexed tradeID);
-    event ListingPriceQuery(uint amount, uint indexed tradeID);
     
-    event LogString(string val1, string val2);
-    event Loguint(string val1, uint val2);
+    /**
+     * @notice emit when a seller has successfully deposited tokens and created a trade listing 
+     */
+    event TradeListingDeposit(address indexed user, uint amount, uint tradeID);
+   
+    /**
+     * @notice emit when a buyer has successfully bought a sellers tokens with ETH
+     */
+    event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
+    
+    /**
+     * @notice emit when a seller has successfuly withdrawn their tokens and removes the trade listing
+     */
+    event TradeListingWithdrawal(address indexed user, uint amount, uint tradeID);
+    
+
+    //-----------------------------------------------------------------
+    // Events Debugging  
+    //-----------------------------------------------------------------
+    /**
+     * @dev Just used for debugging during dev - delete for release
+     */
+    event LogString(string description, string value);
+    event Loguint(string description, uint value);
+    event LogAddress(string description, address value);
 }

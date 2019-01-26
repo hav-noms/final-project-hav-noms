@@ -16,7 +16,7 @@ As we can see from the DAO case, it is a very difficult and important issue. Thi
 
 To solve the problem, use the send() or transfer() function instead of the low level function call(). Transfer() is recommended rather than send() because the transaction will fail with an exception if the transfer fails.
 
-And to prevent reentrant attacks, applied the following modifier and set the user's balance to 0 before tranfer ether.
+And to prevent reentrant attacks, applied the following modifier to protect as we should be deleting calling removeTradeListing(listingID) before we start transfering tokens and ETH
 
 ```
 modifier noReentrancy() {
@@ -26,17 +26,37 @@ modifier noReentrancy() {
 	reentrancyLock = false;
 }
 
-function withdraw() public noReentrancy {
-	require(
-		balance[msg.sender] > 0,
-		"Check the balance"
-	);
-	uint amount = balance[msg.sender];
+function exchangeEtherForTokens(
+		uint listingID)
+	optionalProxy
+	notPaused
+	refund(listingID)
+	noReentrancy
+	payable
+	public
+{
+	// Find the TokenDeposit by depositID in our mapping
+	TradeListing memory trade = tradeListings[listingID];
 
-	// The user's balance is already 0, so future invocations won't withdraw anything
-	balance[msg.sender] = 0;
-	msg.sender.transfer(amount);
-	emit withdrawEther(amount);
+	// Revert if its not found
+	require(trade.totalPrice != 0, "The Trade listingID you've requested does not exist");
+
+	// Make sure the user has sent enough ETH to cover the trade
+	require(msg.value >= trade.totalPrice, "You have not sent enough ETH to cover the cost of this trade");
+
+	// Looks like we can fullfill this exchange
+
+	// Send the ERC20 tokens to the buyer
+	require(IERC20(trade.tokenContractAddress).transfer(messageSender, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
+
+	// Send the ETH to the seller
+	trade.user.transfer(trade.totalPrice); // dont send the msg.value as we may need to refund some to the buyer
+
+	// Tell the DApps there was an Exchange
+	emit Exchange("ETH", trade.totalPrice, trade.symbol, trade.amount);
+
+	// Delete the deposit
+	removeTradeListing(listingID); // @dev to prevent we have a noReentrancy modifier
 }
 ```
 

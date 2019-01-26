@@ -19,12 +19,12 @@ contract ETHPriceTicker is usingOraclize {
 
     function __callback(bytes32 myid, string memory result, bytes memory proof) public {
         require(msg.sender == oraclize_cbAddress(), "Sender must be oraclize_cbAddress");
-        updateEthPrice(); // Recursively update the price stored in the contract...
+        update(); // Recursively update the price stored in the contract...
         priceETHUSD = result;
         emit LogNewPriceUpdate(priceETHUSD);
     }
 
-    function updateEthPrice() public payable {
+    function update() public payable {
         if (oraclize_getPrice("URL") > address(this).balance) {
             emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee!");
         } else {

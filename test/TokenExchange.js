@@ -63,11 +63,13 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       assert.equal(_priceETHUSD, priceETHUSD);
     });
 
+    //-----------------------------------------------------------------
+    // createTradeListing
+    //-----------------------------------------------------------------
+
     describe("When a seller wants to create a trade", async function() {
-      const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".08"); //in ETH
+      const tokenPriceInETH = toUnit(".00069"); //ETH Price (approx 0.08c)
       const numberOfTokens = toUnit("1000");
-      let transaction;
 
       beforeEach(async function() {
         tokenExchange = await TokenExchange.deployed();
@@ -89,7 +91,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           tokenExchange.createTradeListing(
             await shartCoin.symbol(),
             numberOfTokens,
-            tokenPrice,
+            tokenPriceInETH,
             shartCoin.address,
             {
               from: deployerAccount
@@ -110,7 +112,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           tokenExchange.createTradeListing(
             await shartCoin.symbol(),
             0,
-            tokenPrice,
+            tokenPriceInETH,
             shartCoin.address,
             {
               from: deployerAccount
@@ -140,7 +142,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           tokenExchange.createTradeListing(
             await shartCoin.symbol(),
             0,
-            tokenPrice,
+            tokenPriceInETH,
             account3,
             {
               from: deployerAccount
@@ -157,7 +159,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           tokenExchange.createTradeListing(
             await shartCoin.symbol(),
             numberOfTokens,
-            tokenPrice,
+            tokenPriceInETH,
             shartCoin.address,
             {
               from: deployerAccount
@@ -167,10 +169,10 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       });
     });
 
-    describe.only("When saving a tradelisting to the blockchain", async function() {
-      const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".08"); //in ETH
+    describe("When saving a tradelisting to the blockchain", async function() {
+      const tokenPriceInETH = toUnit("0.00069"); //ETH Price (approx 0.08c)
       const numberOfTokens = toUnit("1000");
+      const ETHtoSend = multiplyDecimal(numberOfTokens, tokenPriceInETH);
       let transaction;
 
       beforeEach(async function() {
@@ -184,7 +186,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         transaction = await tokenExchange.createTradeListing(
           await shartCoin.symbol(),
           numberOfTokens,
-          tokenPrice,
+          tokenPriceInETH,
           shartCoin.address,
           {
             from: deployerAccount
@@ -209,6 +211,8 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         assert.equal(tradeListing.user, deployerAccount);
         assert.equal(tradeListing.symbol, await shartCoin.symbol());
         assert.bnEqual(tradeListing.amount, numberOfTokens);
+        assert.bnEqual(tradeListing.ethRate, tokenPriceInETH);
+        assert.bnEqual(tradeListing.totalPrice, ETHtoSend);
         assert.equal(tradeListing.tokenContractAddress, shartCoin.address);
       });
 
@@ -239,10 +243,15 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       });
     });
 
+    //-----------------------------------------------------------------
+    // withdrawMyDepositedTokens
+    //-----------------------------------------------------------------
+
     describe("When a seller wants to withdraw a deposit", async function() {
       const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".08"); //in ETH
+      const tokenPriceInETH = toUnit(".00069"); //ETH Price (approx 0.08c)
       const numberOfTokens = toUnit("1000");
+      const ETHtoSend = multiplyDecimal(numberOfTokens, tokenPriceInETH);
       let transaction;
 
       beforeEach(async function() {
@@ -256,7 +265,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         transaction = await tokenExchange.createTradeListing(
           await shartCoin.symbol(),
           numberOfTokens,
-          tokenPrice,
+          tokenPriceInETH,
           shartCoin.address,
           {
             from: deployerAccount
@@ -296,6 +305,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         assert.equal(tradeListing.symbol, "");
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
+        assert.bnEqual(tradeListing.totalPrice, 0);
         assert.equal(tradeListing.user, ZERO_ADDRESS);
         assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
       });
@@ -321,11 +331,16 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       });
     });
 
+    //-----------------------------------------------------------------
+    // exchangeEtherForTokens
+    //-----------------------------------------------------------------
+
     describe("When a buyer wants to execute a trade", async function() {
       const usdEth = toUnit("100");
-      const tokenPrice = toUnit(".0006"); //in ETH
+      const tokenPriceInETH = toUnit(".0006"); //ETH Price (approx 0.08c)
       const numberOfTokens = toUnit("1000");
-      const ETHtoSend = toUnit("80000");
+      const ETHtoSend = multiplyDecimal(numberOfTokens, tokenPriceInETH);
+      const buyerAccount = account4;
       let transaction;
 
       beforeEach(async function() {
@@ -342,7 +357,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         transaction = await tokenExchange.createTradeListing(
           await shartCoin.symbol(),
           numberOfTokens,
-          tokenPrice,
+          tokenPriceInETH,
           shartCoin.address,
           {
             from: deployerAccount
@@ -373,43 +388,10 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         );
       });
 
-      it("should calc the purchase price", async function() {
-        console.log("calcCostPriceInUSD");
-        let response1 = await tokenExchange.calcCostPriceInUSD.call(
-          numberOfTokens,
-          tokenPrice
-        );
-
-        console.log("costETH", response1.costETH);
-        console.log("costUSD", response1.costUSD);
-
-        let response2 = await tokenExchange.getListingCostPriceInUSD.call(0);
-        console.log(response2);
-        console.log("costETH", response2.costETH);
-        console.log("costUSD", response2.costUSD);
-
-        let response3 = await tokenExchange.callOracle();
-        console.log(response3);
-
-        // Buy tokens for ETH
-        transaction = await tokenExchange.exchangeEtherForTokens(0, {
-          from: deployerAccount,
-          value: ETHtoSend
-        });
-
-        // Assert the tradeListing struct is empty
-        const tradeListing = await tokenExchange.tradeListings(0);
-        assert.equal(tradeListing.symbol, "");
-        assert.bnEqual(tradeListing.amount, 0);
-        assert.bnEqual(tradeListing.ethRate, 0);
-        assert.equal(tradeListing.user, ZERO_ADDRESS);
-        assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
-      });
-
       it("should delete the trade listing", async function() {
         // Buy tokens for ETH
         transaction = await tokenExchange.exchangeEtherForTokens(0, {
-          from: deployerAccount,
+          from: buyerAccount,
           value: ETHtoSend
         });
 
@@ -418,32 +400,83 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         assert.equal(tradeListing.symbol, "");
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
+        //assert.bnEqual(tradeListing.totalPrice, 0);
         assert.equal(tradeListing.user, ZERO_ADDRESS);
         assert.equal(tradeListing.tokenContractAddress, ZERO_ADDRESS);
       });
 
       it("should send the buyer the correct amount of tokens", async function() {
+        // Ask the ERC20 Contract for the balance of the buyer
+        const balanceBefore = await shartCoin.balanceOf(buyerAccount);
+        assert.bnEqual(balanceBefore, 0);
+
         // Buy tokens for ETH
         await tokenExchange.exchangeEtherForTokens(0, {
-          from: deployerAccount,
+          from: buyerAccount,
           value: ETHtoSend
         });
+
+        // Ask the ERC20 Contract for the balance of the buyer
+        const balanceAfter = await shartCoin.balanceOf(buyerAccount);
+
+        //Add the number tokens bought to the before balance
+        assert.bnEqual(
+          web3.utils.toBN(balanceAfter),
+          web3.utils.toBN(balanceBefore).add(numberOfTokens)
+        );
       });
 
-      it("should send the buyer the correct amount of tokens", async function() {
+      it("should send the seller the correct amount of ETH", async function() {
+        // Get Sellers ETH balance
+        const sellersETHBalanceBefore = await getEthBalance(deployerAccount);
+
         // Buy tokens for ETH
-        await tokenExchange.exchangeEtherForTokens(0, {
-          from: deployerAccount,
+        transaction = await tokenExchange.exchangeEtherForTokens(0, {
+          from: buyerAccount,
           value: ETHtoSend
         });
+
+        // Get Sellers ETH balance
+        const sellersETHBalanceAfter = await getEthBalance(deployerAccount);
+
+        // Add the sellersETHBalanceBefore and the ETHtoSend
+        assert.bnClose(
+          web3.utils.toBN(sellersETHBalanceAfter),
+          web3.utils.toBN(sellersETHBalanceBefore).add(ETHtoSend)
+        );
       });
 
-      it("should send the seller the correct amount of ETH"); //, async function() {});
+      it("should reduce the buyers ETH Balance", async function() {
+        // Get Buyers ETH balance
+        const buyerETHBalanceBefore = await getEthBalance(buyerAccount);
+
+        // Buy tokens for ETH
+        transaction = await tokenExchange.exchangeEtherForTokens(0, {
+          from: buyerAccount,
+          value: ETHtoSend
+        });
+
+        const gasPaid = web3.utils.toBN(
+          transaction.receipt.gasUsed * 20000000000
+        );
+
+        // Get Buyers ETH balance
+        const buyerETHBalanceAfter = await getEthBalance(buyerAccount);
+
+        // Ensure the difference is the amount of ETH sent
+        assert.bnEqual(
+          web3.utils.toBN(buyerETHBalanceAfter),
+          web3.utils
+            .toBN(buyerETHBalanceBefore)
+            .sub(ETHtoSend)
+            .sub(gasPaid)
+        );
+      });
 
       it("should emit the Exchange event", async function() {
         // Buy tokens for ETH
         transaction = await tokenExchange.exchangeEtherForTokens(0, {
-          from: deployerAccount,
+          from: buyerAccount,
           value: ETHtoSend
         });
 
@@ -455,6 +488,22 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           toAmount: numberOfTokens
         });
       });
+
+      //TODO Oracle Tests
+      // it("should calc the purchase price in USD", async function() {
+      //   // Get the price in USD which is able to calc from the oracle feed of the ETHUSD price
+      //   let response = await tokenExchange.getTradeCostPriceInUSD.call(0);
+      //   console.log(response);
+      //   const costUSD = web3.utils.toBN(response.costUSD);
+
+      //   console.log("costUSD", costUSD.toString());
+
+      //   // TODO ASSERT the cost in USD based on the SEED PRICE
+
+      //   return;
+      //   //let response3 = await tokenExchange.callOracle();
+      //   //console.log(response3);
+      // });
     });
   });
 });
