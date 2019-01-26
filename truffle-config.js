@@ -20,6 +20,7 @@
 
 const HDWalletProvider = require("truffle-hdwallet-provider");
 
+const path = require("dotenv");
 const fs = require("fs");
 
 const infuraKey = fs
@@ -35,6 +36,10 @@ const mnemonic = fs
 console.log("mnemonic:", mnemonic);
 
 module.exports = {
+  // See <http://truffleframework.com/docs/advanced/configuration>
+  // to customize your Truffle configuration!
+  // contracts_build_directory: path.join(__dirname, "client/src/contracts"),
+
   /**
    * Networks define how you connect to your ethereum client and let you set the
    * defaults web3 uses to send transactions. If you don't specify one truffle

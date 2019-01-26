@@ -1,0 +1,14 @@
+.panelSection {
+  border: 1px solid black;
+  margin: 20px 0;
+  padding: 20px;
+}
+
+.panelSection ul {
+  list-style: none;
+}
+
+
+.listIsEmpty {
+	font-style: italic;
+}

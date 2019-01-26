@@ -1,7 +1,5 @@
 # P2P Token Exchange
 
-[![Build Status](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor.svg?branch=master)](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor)
-
 A simple Peer 2 Peer Token exchange where;
 
 - sellers create a trade listing, depositing their ERC20 tokens to trade into the contract.
