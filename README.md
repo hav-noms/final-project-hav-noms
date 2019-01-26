@@ -1,7 +1,5 @@
 # P2P Token Exchange
 
-[![Build Status](https://travis-ci.org/hav-noms/final-project-hav-noms.svg?branch=master)](https://travis-ci.org/hav-noms/final-project-hav-noms)
-
 A simple Peer 2 Peer Token exchange where;
 
 - sellers create a trade listing, depositing their ERC20 tokens to trade into the contract.
