@@ -1,6 +1,6 @@
 # P2P Token Exchange
 
-[![Build Status](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor.svg?branch=master)](https://travis-ci.org/dev-bootcamp-2019/final-project-feamcor)
+[![Build Status](https://travis-ci.org/dev-bootcamp-2019/final-project-hav-noms.svg?branch=master)](https://travis-ci.org/dev-bootcamp-2019/final-project-hav-noms)
 
 A simple Peer 2 Peer Token exchange where;
 
