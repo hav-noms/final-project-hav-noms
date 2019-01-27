@@ -132,10 +132,6 @@ Steps:
 
 Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
-Rinkeby: https://p2ptokenexchange-rinkeby.netlify.com
-
-kovan: https://p2ptokenexchange-kovan.netlify.com
-
 PFS: https://ipfs.io/ipfs/Qmb.....
 
 ## Developer Bootcamp Final Project Evaluation Checklist
@@ -164,8 +160,8 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 ### User Interface
 
 - [x] Run the dapp on a development server locally for testing and grading.
-  - [o] Testing on Ropsten;
-  - [o] Testing on Kovan;
+  - [x] Testing on Ropsten;
+  - [ ] Testing on Kovan;
   - [ ] Testing on Rinkeby;
 - [x] You should be able to visit a URL (can be localhost) and interact with the application:
   - [x] Display the current account;
@@ -185,7 +181,6 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 - [x] Implement a circuit breaker (emergency stop) pattern.
 - [x] What other design patterns have you used / not used?
   - [x] Why did you choose the patterns that you did?
-  - [ ] Why not others?
 
 ### Security Tools / Common Attacks
 
@@ -197,11 +192,12 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 
 ### Deployment
 
-- [o] Deploy your application onto one of the test networks.
-- [o] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
-- [o] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
-- [o] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
-- [ ] Serve the UI from IPFS or a traditional web server
+- [x] Deploy your application onto one of the test networks.
+- [x] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
+- [x] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
+- [x] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
+- [x] Serve the UI from IPFS or a traditional web server
+- [x] https://p2ptokenexchange-ropsten.netlify.com
 
 ### Additional
 
@@ -210,10 +206,13 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 ### Stretch
 
 - [x] Implement an upgradable design pattern
+  - [x] implemented proxy and external storage pattern
 - [x] Oracle
+  - [x] Implemented Oracalize for ETHUSD pricing
 - [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/<contract_name>` Auction started for p2ptokenexchange
-      https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
+  - [x] ENS Auction created https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
 - [o] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
+  - [ ] DAPP IPFS URL
 - [ ] Project includes one smart contract implemented in LLL / Vyper
 
 [ens]: ens_bid.png

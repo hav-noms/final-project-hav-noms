@@ -338,7 +338,13 @@ class SellOrders extends Component {
                   <td>{trade.amount}</td>
                   <td>{trade.ethRate}</td>
                   <td>{trade.totalPrice}</td>
-                  <td>{trade.seller}</td>
+                  <td>
+                    <Link
+                      to={`https://ropsten.etherscan.io/token//${trade.seller}`}
+                    >
+                      {trade.seller}
+                    </Link>
+                  </td>
                   <td>{trade.contract}</td>
                   <td>
                     <button onClick={() => this.exchangeEtherForTokens(trade)}>
@@ -483,11 +489,6 @@ class SellOrders extends Component {
   render() {
     return (
       <div>
-        {/* <div>
-          <button onClick={() => this.refreshData()}>
-            Force Refresh All Data
-          </button>
-        </div> */}
         {this.renderContractInfoSection()}
         {this.renderAddTradeSection()}
         <h1>Sell Orders</h1>
