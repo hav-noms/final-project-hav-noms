@@ -115,13 +115,13 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 ### User Interface
 
 - [x] Run the dapp on a development server locally for testing and grading.
-- [x] Testing on Ropsten;
-- [ ] Testing on Kovan;
-- [ ] Testing on Rinkeby;
-- [x] You should be able to visit a URL (can be localhost) and interact with the application:
+  - [x] Testing on Ropsten; (I chose ropsten instead of rinkeby becuase there is no ENS on rinkeby)
+- [x] You should be able to visit a URL (can be localhost) and interact with the application
+  - [x] localhost
+  - [x] https://p2ptokenexchange-ropsten.netlify.com
 - [x] Display the current account;
 - [x] Sign transactions using MetaMask;
-- [x] Reflect updates to the conract state
+- [x] Reflect updates to the contract state
 
 ### Testing
 
@@ -135,7 +135,7 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 
 - [x] Implement a circuit breaker (emergency stop) pattern.
 - [x] What other design patterns have you used / not used?
-- [x] Why did you choose the patterns that you did?
+  - [x] Why did you choose the patterns that you did?
 
 ### Security Tools / Common Attacks
 
@@ -152,7 +152,7 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 - [x] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
 - [x] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
 - [x] Serve the UI from IPFS or a traditional web server
-- [x] https://p2ptokenexchange-ropsten.netlify.com
+  - [x] https://p2ptokenexchange-ropsten.netlify.com
 
 ### Additional
 
@@ -161,13 +161,13 @@ PFS: https://ipfs.io/ipfs/Qmb.....
 ### Stretch
 
 - [x] Implement an upgradable design pattern
-- [x] implemented proxy and external storage pattern
+  - [x] implemented proxy and external storage pattern
 - [x] Oracle
-- [x] Implemented Oracalize for ETHUSD pricing
+  - [x] Implemented Oracalize for ETHUSD pricing
 - [ ] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
-- [ ] DAPP IPFS URL
+  - [ ] DAPP IPFS URL
 - [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
-- [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
+  - [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
 
 ![alt text](ens_bid.png "Dapp UI")
 ```
