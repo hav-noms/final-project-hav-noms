@@ -339,11 +339,13 @@ class SellOrders extends Component {
                   <td>{trade.ethRate}</td>
                   <td>{trade.totalPrice}</td>
                   <td>
-                    <Link
-                      to={`https://ropsten.etherscan.io/token//${trade.seller}`}
+                    <a
+                      href={`https://ropsten.etherscan.io/token//${
+                        trade.seller
+                      }`}
                     >
                       {trade.seller}
-                    </Link>
+                    </a>
                   </td>
                   <td>{trade.contract}</td>
                   <td>
