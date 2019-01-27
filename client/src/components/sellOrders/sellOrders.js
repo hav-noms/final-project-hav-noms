@@ -340,14 +340,22 @@ class SellOrders extends Component {
                   <td>{trade.totalPrice}</td>
                   <td>
                     <a
-                      href={`https://ropsten.etherscan.io/token//${
+                      href={`https://ropsten.etherscan.io/address/${
                         trade.seller
                       }`}
                     >
                       {trade.seller}
                     </a>
                   </td>
-                  <td>{trade.contract}</td>
+                  <td>
+                    <a
+                      href={`https://ropsten.etherscan.io/address/${
+                        trade.contract
+                      }`}
+                    >
+                      {trade.contract}
+                    </a>
+                  </td>
                   <td>
                     <button onClick={() => this.exchangeEtherForTokens(trade)}>
                       BUY

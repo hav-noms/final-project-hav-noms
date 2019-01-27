@@ -15,6 +15,8 @@ This project focuses on the best patterns and practices implementation from the 
 - Buyers can select a trade to fulfil and send ETH to the contract and will be send your tokens, you will be sent the ETH
 - Withdraw your trade listing and have your tokens returned to you
 
+![DApp ui](ui.png "Dapp UI")
+
 ## Setup
 
 Requirements:
@@ -209,10 +211,9 @@ PFS: https://ipfs.io/ipfs/Qmb.....
   - [x] implemented proxy and external storage pattern
 - [x] Oracle
   - [x] Implemented Oracalize for ETHUSD pricing
-- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/<contract_name>` Auction started for p2ptokenexchange
-  - [x] ENS Auction created https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
-- [o] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
+- [ ] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
   - [ ] DAPP IPFS URL
-- [ ] Project includes one smart contract implemented in LLL / Vyper
+- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
+  - [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
 
-[ens]: ens_bid.png
+![alt text](ens_bid.png "Dapp UI")
