@@ -62,46 +62,43 @@ Steps:
    // Set this const to your chosen ENV
    const SMART_CONTRACT_ADDR = SMART_CONTRACT_ADDR_ROPSTEN;
    ```
-
-```
-
 3. Start the React app.
-```
-
-\$ npm run start
-
-```
+   ```
+   \$ npm run start
+   ```
 4. Alternatively you can use the app locally with the deployed contracts addresses:
 
-- Ropsten:
+Ropsten:
 
-- TokenExchange: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
-- TokenExchange ABI https://gist.github.com/hav-noms/4da6852c9656e10217cfda83f998bdd3
-- Proxy: https://ropsten.etherscan.io/token/0x5f05f53A0E3E19A0de45b0Ac85100e3e61aE7EE4
-- ShartCoin: https://ropsten.etherscan.io/token/0x651d56e6cCe013cf08C32b7E53cD2A1cbf103976
-- TokenExchangeState: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+- TokenExchange: [link text itself]: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+- TokenExchange ABI [link text itself]: https://gist.github.com/hav-noms/4da6852c9656e10217cfda83f998bdd3
+- Proxy: [link text itself]: https://ropsten.etherscan.io/token/0x5f05f53A0E3E19A0de45b0Ac85100e3e61aE7EE4
+- ShartCoin: [link text itself]: https://ropsten.etherscan.io/token/0x651d56e6cCe013cf08C32b7E53cD2A1cbf103976
+- TokenExchangeState: [link text itself]: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
 
-- Rinkeby: https://rinkeby.etherscan.io/token/0x
+Rinkeby:
+
+- https://rinkeby.etherscan.io/token/0x
 
 ## Deployed versions of the dApp
 
 Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
-PFS: https://ipfs.io/ipfs/Qmb.....
+IPFS: https://ipfs.io/ipfs/Qmb.....
 
 ## Developer Bootcamp Final Project Evaluation Checklist
 
 - [x] A README.md that explains the project
 - [x] What does it do?
 - [x] How to set it up.
- - [x] How to run a local development server.
+- [x] How to run a local development server.
 - [x] It should be a [Truffle project](https://truffleframework.com/docs/truffle/getting-started/creating-a-project).
 - [x] All contracts should be in a `contracts` directory.
- - [x] `truffle compile` should successfully compile contracts.
+- [x] `truffle compile` should successfully compile contracts.
 - [x] Migration contract and migration scripts should work.
- - [x] `truffle migrate` should successfully migrate contracts to a locally running `ganache-cli` test blockchain on port `8454`.
+- [x] `truffle migrate` should successfully migrate contracts to a locally running `ganache-cli` test blockchain on port `8454`.
 - [x] All tests should be in a `tests` directory.
- - [x] `truffle test` should migrate contracts and run the tests.
+- [x] `truffle test` should migrate contracts and run the tests.
 - [x] Smart contract code should be commented according to the [specs in the documentation](https://solidity.readthedocs.io/en/v0.5.2/layout-of-source-files.html#comments).
 - [x] Create at least 5 tests for each smart contract.
 - [x] Write a sentence or two explaining what the tests are covering, and explain why those tests were written.
@@ -170,4 +167,3 @@ PFS: https://ipfs.io/ipfs/Qmb.....
   - [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
 
 ![alt text](ens_bid.png "Dapp UI")
-```
