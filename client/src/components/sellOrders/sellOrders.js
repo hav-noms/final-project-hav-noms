@@ -136,9 +136,7 @@ class SellOrders extends Component {
         seller
       });
 
-      setTimeout(() => {
-        this.setState({ trades });
-      }, 2000);
+      this.setState({ trades });
     });
   }
 
