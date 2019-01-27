@@ -7,6 +7,7 @@ contract TokenExchangeState is EternalStorage {
     /**
      * @dev Constructor
      * @param _associatedContract The calling contract for whoms state we hold
+     * @author https://github.com/hav-noms/
      */
     constructor(address _associatedContract)
         State(_associatedContract)

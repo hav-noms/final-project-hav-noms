@@ -7,6 +7,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol";
  * @notice Inherits the openzeppelin ERC20.sol
  * @dev This is only used in the local ganache for unit tests and local testing
  * on a TESTNET you can use any ERC20 deployed on those networks
+ * @author https://github.com/hav-noms/
  */
 contract ShartCoin is ERC20, ERC20Detailed {
     address public owner;

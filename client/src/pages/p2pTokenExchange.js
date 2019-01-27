@@ -12,9 +12,7 @@ class P2PTokenExchange extends Component {
     this.setCurrentView = this.setCurrentView.bind(this);
   }
 
-  async componentDidMount() {
-    const { contract, accounts } = this.props;
-  }
+  async componentDidMount() {}
 
   setCurrentView(view) {
     return () => {
@@ -41,19 +39,12 @@ class P2PTokenExchange extends Component {
   }
 
   render() {
-    const { contract, signer, accounts, erc20DetailedABI } = this.props;
+    const { accounts } = this.props;
     return (
       <div className="p2pTokenExchange">
         <h1>Decentralized p2p Token Exchange</h1>
+        <span>Sell your tokens for ETH. No fees. No middle man.</span>
         <h3>Your address: {accounts[0]}</h3>
-        {/* <div>
-          <button onClick={this.setCurrentView("index")}>
-            Tokens For Sale
-          </button>
-          <button onClick={this.setCurrentView("createListing")}>
-            Sell Your Tokes
-          </button>
-        </div> */}
         {this.renderPageContent()}
       </div>
     );

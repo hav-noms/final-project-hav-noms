@@ -15,6 +15,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * When a new contract is deployed, it links to the existing
  * state contract, whose owner would then change its associated
  * contract to the new one.
+ * @author https://github.com/hav-noms/
  */
 contract State is Ownable {
 

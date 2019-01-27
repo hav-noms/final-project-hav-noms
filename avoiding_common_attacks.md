@@ -8,7 +8,8 @@
 
 - [Reentrancy](#reentrancy)
 - [Integer Overflow and Underflow](#integer-overflow-and-underflow)
-- [Ownable](#Ownable)
+- [Exposed Functions](#Exposed Functions)
+- [Denial of Service](#Denial of Service)
 
 ## Reentrancy
 
@@ -16,7 +17,7 @@ As we can see from the DAO case, it is a very difficult and important issue. Thi
 
 To solve the problem, use the send() or transfer() function instead of the low level function call(). Transfer() is recommended rather than send() because the transaction will fail with an exception if the transfer fails.
 
-And to prevent reentrant attacks, applied the following modifier to protect as we should be deleting calling removeTradeListing(listingID) before we start transfering tokens and ETH
+And to prevent reentrant attacks, applied the following noReentrancy() modifier to protect from reentrant calls as we should be deleting calling removeTradeListing(listingID) before we start transfering tokens and ETH
 
 ```
 modifier noReentrancy() {
@@ -46,6 +47,9 @@ function exchangeEtherForTokens(
 
 	// Looks like we can fullfill this exchange
 
+	// Delete the deposit <--- DELETE STORAGE HERE
+	removeTradeListing(listingID); // @dev to also protect incase this line gets moved we have the  noReentrancy modifier
+
 	// Send the ERC20 tokens to the buyer
 	require(IERC20(trade.tokenContractAddress).transfer(messageSender, trade.amount), "The transfer of the ERC20 Tokens failed. Check the ERC20 Token contract");
 
@@ -54,9 +58,6 @@ function exchangeEtherForTokens(
 
 	// Tell the DApps there was an Exchange
 	emit Exchange("ETH", trade.totalPrice, trade.symbol, trade.amount);
-
-	// Delete the deposit
-	removeTradeListing(listingID); // @dev to prevent we have a noReentrancy modifier
 }
 ```
 
@@ -74,6 +75,12 @@ function withdraw(uint _amount) {
 
 To solve this problem, it is most common to use the SafeMath library created by openzeppelin.
 
-## Ownable
+## Exposed Functions
 
 To secure Admin only functions openzeppelin Ownable library has been implementd to protect admin functions with the onlyOwner modifer
+
+Correct use of acessors. All functions are either internal or external when applicable.
+
+## Denial of Service
+
+All input data is validated and we fail(require early) and loops were avoided in write functions.

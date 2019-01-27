@@ -10,6 +10,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * its owner indicates an intention and then waits for a period
  * without changing their mind. All ether contained in the contract
  * is forwarded to a nominated beneficiary upon destruction.
+ * @author https://github.com/hav-noms/
  */
 contract Mortal is Ownable {
     

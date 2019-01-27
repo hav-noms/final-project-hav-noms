@@ -15,6 +15,7 @@ import "./ETHPriceTicker.sol";
  * @notice Allows people to list their alt coins to sell for ETH
  * Buyer choose a listing and send ETH to the contract which will 
  * send the seller the ETH and the buyer the tokens
+ * @author https://github.com/hav-noms/
  */
 contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     using SafeMath for uint;
@@ -29,7 +30,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // The user that made the token deposit who wants to sell their tokens for ETH
         address payable seller;
         // The token symbol
-        string symbol;
+        bytes4 symbol;
         // The amount that they deposited for trading
         uint amount;
         // The ETH rate the person wants to sell their token for
@@ -95,7 +96,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
     /**
      * @notice Return the list of Trades
-     * @dev must return seperate arrays with the datatypes and the index is the row number
+     * @dev solidity sux so we must return seperate arrays with the datatypes and the index is the row number
      */
     function getTradeList() 
         public 
@@ -106,18 +107,32 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
             uint[] memory amounts, 
             uint[] memory ethRates, 
             uint[] memory totalPrices,
-            address[] memory contracts,
-            address[] memory seller) 
+            address[] memory tokenContractAddresss,
+            address[] memory sellers
+            ) 
     {
+        // Get the Trade list Length
         uint tradeCount = tradeID.length;
+
+        // Setup return arrays for each property
+        ids = new uint[](tradeCount);
+        symbols = new bytes4[](tradeCount);
+        amounts = new uint[](tradeCount);
+        ethRates = new uint[](tradeCount);
+        totalPrices = new uint[](tradeCount);
+        tokenContractAddresss = new address[](tradeCount);
+        sellers = new address[](tradeCount);
+
+        // Iterate our trade mappings putting the values into each "row" array
         for (uint i = 0; i < tradeCount; i++) {
             if (tradeListings[i].totalPrice != 0) {
                 ids[i] = i; 
-                //symbols[i] = bytes4(tradeListings[i].symbol);      
+                symbols[i] = tradeListings[i].symbol;      
                 amounts[i] = tradeListings[i].amount;      
                 ethRates[i] = tradeListings[i].ethRate;      
                 totalPrices[i] = tradeListings[i].totalPrice; 
-                contracts[i] = tradeListings[i].tokenContractAddress;  
+                tokenContractAddresss[i] = tradeListings[i].tokenContractAddress; 
+                sellers[i] = tradeListings[i].seller;   
             }   
         }
     }
@@ -128,7 +143,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     function getTrade(uint id) 
         public 
         view 
-    returns(string memory symbol, uint amount, uint ethRate, uint totalPrice, address tokenContractAddress, address seller) {
+    returns(bytes4 symbol, uint amount, uint ethRate, uint totalPrice, address tokenContractAddress, address seller) {
         symbol = tradeListings[id].symbol; 
         amount = tradeListings[id].amount;
         ethRate = tradeListings[id].ethRate;
@@ -149,7 +164,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
      * @param tokenContract The address of the token contract
      */
     function createTradeListing(
-            string memory symbol,  
+            bytes4 symbol,  
             uint amount, 
             uint ethRate,
             address tokenContract)
@@ -306,7 +321,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         //delete tradeListings[listingID]; was causing VM error and reverting
 
         // Clear struct values in mapping but the one reverting the EVM
-        tradeListings[listingID].symbol = '';
+        tradeListings[listingID].symbol = bytes4("");
         tradeListings[listingID].seller = address(0);
         tradeListings[listingID].tokenContractAddress = address(0);
         tradeListings[listingID].amount = 0;
@@ -357,7 +372,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     /**
      * @notice emit when a buyer has successfully bought a sellers tokens with ETH
      */
-    event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
+    event Exchange(string fromSymbol, uint fromAmount, bytes4 toSymbol, uint toAmount);
     
     /**
      * @notice emit when a seller has successfuly withdrawn their tokens and removes the trade listing

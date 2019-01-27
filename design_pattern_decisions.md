@@ -6,6 +6,7 @@
 - [x] Owned - Protect the critical system admin functions with owner only modifers. I've used my own owned instead of open zeplins to have full control over the code on this one.
 - [x] Mortal - ownerOnly functionality to allow deprecated contracts to be killed/selfdestructed as part of the upgrade mechanism.
 - [x] Pausable - ownerOnly Circuit Breaker to allow the Smart Contract system to be stop incase of a known vulnerability and for upgrades
+- [x] SafeDecimalMath - An extension of SafeMath provides operations on wei that include the ERC20 standard of 18 decimals
 
 ## Inheritance Map
 
@@ -56,3 +57,7 @@ I've used a simple solution where I store the struct in the mapping and keep and
 implemented the "Mapped Structs with Delete-enabled Index"
 
 However I chose the simplest solution as this project is more about the entirety of best patterns and practices for building smart contracts on ethereum.
+
+### Oracle
+
+oraclize was included in this project as a stretch goal. The idea was to get the ETHUSD price from kraken so we could allow the DAPP to workin in USD mode which is more relatable for users to understand rather than ETH pricing.

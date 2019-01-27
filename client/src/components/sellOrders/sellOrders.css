@@ -2,6 +2,7 @@
   border: 1px solid black;
   margin: 20px 0;
   padding: 20px;
+  display: inline-block;
 }
 
 .panelSection ul {
@@ -18,4 +19,36 @@
 
 .tradesTable td {
   text-align: center;
+}
+
+input {
+  vertical-align: left;
+}
+
+.div-table {
+  display: inline-block;
+  display: table;
+  width: 650px;
+  background-color: #eee;
+  border: 1px solid #666666;
+  border-spacing: 5px; /* cellspacing:poor IE support for  this */
+}
+.div-table-row {
+  display: table-row;
+  width: auto;
+  clear: both;
+}
+
+.div-table-cel {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;
+  width: 300px;
+  text-align: right;
+}
+
+.div-table-cel input {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;
+  width: 300px;
+  text-align: left;
 }

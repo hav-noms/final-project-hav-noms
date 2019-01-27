@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import TokenExchangeContract from "./contracts/TokenExchange.json";
 import ERC20Detailed from "./contracts/ERC20Detailed.json";
-import getWeb3 from "./utils/getWeb3";
+//import getWeb3 from "./utils/getWeb3"; ethers instead
 import { ethers, Contract } from "ethers";
 import P2PTokenExchange from "./pages/p2pTokenExchange";
 
-const SMART_CONTRACT_ADDR = "0xA09ba9173F9a3CAa4574F97044DF886D50C4Dcb3";
+const SMART_CONTRACT_ADDR = "0x4BF3D0A8f10178B184bd4815AE8c23B3afcCc358";
+const SMART_CONTRACT_ENS = "p2ptokenexchange.eth";
 
 class App extends Component {
   state = { accounts: null, contract: null };
@@ -19,6 +20,7 @@ class App extends Component {
 
     try {
       const contract = await new Contract(
+        //SMART_CONTRACT_ENS
         SMART_CONTRACT_ADDR,
         TokenExchangeContract.abi,
         signer

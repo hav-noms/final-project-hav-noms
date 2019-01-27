@@ -8,6 +8,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * This contract allows an inheriting contract to be marked as
  * paused. It also defines a modifier which can be used by the
  * inheriting contract to prevent actions while paused.
+ * @author https://github.com/hav-noms/
  */
 contract Pausable is Ownable {
     

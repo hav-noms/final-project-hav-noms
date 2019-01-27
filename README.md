@@ -33,11 +33,75 @@ Requirements:
 3. Run Ganache CLI
 4. Run `truffle test`
 
+You should see
+
+Contract: Mortal
+✓ should set owner address on deployment (56ms)
+✓ should set selfDestructBeneficiary address on deployment
+✓ should set the beneficiary address of this contract (51ms)
+✓ should begin the self-destruction counter of this contract. (70ms)
+✓ should Terminate and reset the self-destruction timer (97ms)
+✓ should only be terminated after we reach the SELFDESTRUCT_DELAY (128ms)
+
+Contract: Pausable - Contract killswitch safety mechanism
+✓ should set owner address on deployment
+✓ should setPaused to true and emit paused is set to true (51ms)
+✓ should setPaused to false and paused is set to false (49ms)
+✓ should setPaused to true and emit the correct event
+✓ should setPaused to false and emit the correct event (66ms)
+
+Contract: State - Tiny Contract only 3 tests
+✓ should set owner address on deployment (49ms)
+✓ should setAssociatedContract to the given address (47ms)
+✓ should setAssociatedContract and emit the correct event
+
+Contract: TokenExchange - Test contract deployment
+When calling the constructor
+✓ should set owner address on deployment
+✓ should set proxy address on deployment
+✓ should set external state address on deployment
+✓ should set selfDestructBeneficiary address on deployment
+✓ should set the seed ETHUSD price from the contructor
+When a seller wants to create a trade
+✓ should revert if the contract is paused (138ms)
+✓ should revert if the amount of tokens being deposited is zero (98ms)
+✓ should revert if the TokenListing (price) ethRate is zero (52ms)
+✓ should revert if the address supplied is not a contract (52ms)
+✓ should revert if the ERCToken Contract has not approved the amount to transfer (59ms)
+When saving a tradelisting to the blockchain
+✓ should emit the event TradeListingDeposit
+✓ should create a tradeListing and be publicly accessable
+✓ should create a tradeListing increase the tradeListingCount count
+✓ should have a token balance of the amount of tokens we deposited
+✓ should have reduced the balance at the depositors wallet address (54ms)
+✓ should return a list of trades (131ms)
+✓ should return a trade when calling getTrade(id) (165ms)
+When a seller wants to withdraw a deposit
+✓ should revert if the contract is paused (95ms)
+✓ should revert if the deposit does not belong to the seller (52ms)
+✓ should delete the trade listing (79ms)
+✓ should return the sellers tokens deposited into the contract (79ms)
+✓ should emit the event TradeListingWithdrawal (53ms)
+When a buyer wants to execute a trade
+✓ should revert if the contract is paused (75ms)
+✓ should revert if the sender did not send enough ETH (49ms)
+✓ should delete the trade listing (72ms)
+✓ should send the buyer the correct amount of tokens (109ms)
+✓ should send the seller the correct amount of ETH (79ms)
+✓ should reduce the buyers ETH Balance (62ms)
+✓ should emit the Exchange event (86ms)
+
+43 passing (10s)
+
 # Run the DAPP
 
 1. Go into the client folder and run `npm install`
 2. Run `npm run start`
 3. Make sure that MetaMask is connected to localhost:8545
+
+or run online
+
+- https://ipfs.io/ipfs/Qmb.....
 
 ## Developer Bootcamp Final Project Evaluation Form
 
@@ -65,13 +129,13 @@ Requirements:
 ### User Interface
 
 - [x] Run the dapp on a development server locally for testing and grading.
-  - [ ] Testing on Ropsten;
+  - [o] Testing on Ropsten;
+  - [o] Testing on Kovan;
   - [ ] Testing on Rinkeby;
-  - [ ] Testing on Kovan;
-- [ ] You should be able to visit a URL (can be localhost) and interact with the application:
-  - [ ] Display the current account;
-  - [ ] Sign transactions using MetaMask;
-  - [ ] Reflect updates to the conract state
+- [x] You should be able to visit a URL (can be localhost) and interact with the application:
+  - [x] Display the current account;
+  - [x] Sign transactions using MetaMask;
+  - [x] Reflect updates to the conract state
 
 ### Testing
 
@@ -98,11 +162,11 @@ Requirements:
 
 ### Deployment
 
-- [x] Deploy your application onto one of the test networks.
-- [x] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
-- [x] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
-- [x] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
-- [x] Serve the UI from IPFS or a traditional web server
+- [o] Deploy your application onto one of the test networks.
+- [o] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
+- [o] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
+- [o] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
+- [ ] Serve the UI from IPFS or a traditional web server
 
 ### Additional
 
@@ -112,6 +176,9 @@ Requirements:
 
 - [x] Implement an upgradable design pattern
 - [x] Oracle
-- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://rinkeby.etherscan.io/<contract_name>`
-- [x] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
+- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/<contract_name>` Auction started for p2ptokenexchange
+      https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
+- [o] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
 - [ ] Project includes one smart contract implemented in LLL / Vyper
+
+[ens]: ens_bid.png

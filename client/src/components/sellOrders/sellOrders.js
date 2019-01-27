@@ -14,6 +14,7 @@ class SellOrders extends Component {
       priceETHUSD: "",
       trades: null
     };
+
     this.createTradeListing = this.createTradeListing.bind(this);
     this.withdrawMyDepositedTokens = this.withdrawMyDepositedTokens.bind(this);
     this.exchangeEtherForTokens = this.exchangeEtherForTokens.bind(this);
@@ -27,10 +28,66 @@ class SellOrders extends Component {
     this.approveTokenTransfer = this.approveTokenTransfer.bind(this);
     this.callOracle = this.callOracle.bind(this);
     this.refreshData = this.refreshData.bind(this);
+
+    this.listenToContractEvents = this.listenToContractEvents.bind(this);
   }
 
+  componentDidMount() {
+    this.refreshData();
+    this.listenToContractEvents();
+  }
+
+  async listenToContractEvents() {
+    const { contract } = this.props;
+
+    contract.on("TradeListingDeposit", (seller, amount, tradeID, event) => {
+      console.log("Event TradeListingDeposit");
+      console.log("seller", seller);
+      console.log("amount", amount.toString());
+      console.log("tradeID", tradeID.toString());
+
+      console.log(event.blockNumber);
+
+      //refresh the data
+      this.refreshData();
+    });
+
+    contract.on(
+      "Exchange",
+      (fromSymbol, fromAmount, toSymbol, toAmount, event) => {
+        console.log("Event Exchange");
+        // Called when anyone changes the value
+        console.log(fromSymbol);
+        console.log(fromAmount);
+        console.log(toSymbol);
+        console.log(toAmount);
+
+        console.log(event.blockNumber);
+
+        //refresh the data
+        this.refreshData();
+      }
+    );
+
+    contract.on("TradeListingWithdrawal", (seller, amount, tradeID, event) => {
+      console.log("Event TradeListingWithdrawal");
+      console.log("seller", seller);
+      console.log("amount", amount.toString());
+      console.log("tradeID", tradeID.toString());
+
+      console.log(event.blockNumber);
+
+      //refresh the data
+      this.refreshData();
+    });
+  }
+
+  //-----------------------------------------------------------------
+  // Conctract Calls
+  //-----------------------------------------------------------------
+
   async refreshData() {
-    const { contract, signer, erc20DetailedABI } = this.props;
+    const { contract } = this.props;
     const tradeListResult = await contract.getTradeListingCount();
     const priceETHUSD = await contract.priceETHUSD();
     const tradeListCount = ethers.utils
@@ -38,30 +95,115 @@ class SellOrders extends Component {
       .toString();
 
     this.setState({ tradeListCount, priceETHUSD });
-    this.getListOfTrades();
+    this.getMockTrades();
+    //this.getListOfTrades();
   }
 
+  async getTradesList() {
+    const { contract } = this.props;
+    let trades = [];
+
+    const [
+      ids,
+      symbols,
+      amounts,
+      ethRates,
+      totalPrices,
+      contracts,
+      sellers
+    ] = await contract.getTradeList();
+
+    ids.forEach((idInt, i) => {
+      const id = idInt;
+      const symbol = ethers.utils.parseBytes32String(symbols[i]);
+      const amount = ethers.utils.formatEther(amounts[i]);
+      const ethRate = ethers.utils.formatEther(ethRates[i]);
+      const totalPrice = ethers.utils.formatEther(totalPrices[i]);
+      const contract = contracts[i];
+      const seller = sellers[i];
+      trades.push({
+        id,
+        symbol,
+        amount,
+        ethRate,
+        totalPrice,
+        contract,
+        seller
+      });
+      console.log({
+        id,
+        symbol,
+        amount,
+        ethRate,
+        totalPrice,
+        contract,
+        seller
+      });
+      this.setState({ trades });
+    });
+  }
+
+  /* 
   async getListOfTrades() {
-    const { contract, signer, erc20DetailedABI } = this.props;
-    const result = await contract.getTradeList();
+    const { contract } = this.props;
+    let result;
+    let trades = [];
+
+    try {
+      result = await contract.getTradeList();
+    } catch (e) {
+      console.log(e);
+    }
 
     if (result["ids"].length > 0) {
-      let trades = [];
       result.forEach((tradeID, i) => {
         console.log("tradeID", tradeID);
         const id = result["ids"][i];
-        const symbol = this.getTokenSymbol(result["symbols"][i]); //symbols[i].toString(); //ethers.utils.parseBytes32String(names[i]);
+        const symbol = ethers.utils.parseBytes32String(result["symbols"][i]);
+        // const symbol = await this.getTokenSymbol(result["symbols"][i]);
         const amount = result["amounts"][i];
         const ethRate = result["ethRates"][i];
         const totalPrice = result["totalPrices"][i];
-        trades.push({ id, symbol, amount, ethRate, totalPrice });
+        const seller = result["seller"][i];
+        const contractAddress = result["contractAddress"][i];
+        trades.push({
+          id,
+          symbol,
+          amount,
+          ethRate,
+          totalPrice,
+          seller,
+          contractAddress
+        });
       });
       this.setState({ trades });
     }
   }
+ */
+
+  // async getMockTrades() {
+  //   const { contract } = this.props;
+  //   let trades = [];
+
+  //   trades.push({
+  //     id: 1,
+  //     symbol: "SHT",
+  //     amount: 1000,
+  //     ethRate: 0.0006,
+  //     totalPrice: 60000000000000000
+  //   });
+  //   trades.push({
+  //     id: 2,
+  //     symbol: "SHT",
+  //     amount: 10,
+  //     ethRate: 0.0008,
+  //     totalPrice: 60000000000000000
+  //   });
+  //   this.setState({ trades });
+  // }
 
   getTokenSymbol(contractAddress) {
-    const { contract, signer, erc20DetailedABI } = this.props;
+    const { signer, erc20DetailedABI } = this.props;
     return async () => {
       try {
         const erc20Contract = await new Contract(
@@ -76,10 +218,6 @@ class SellOrders extends Component {
     };
   }
 
-  componentDidMount() {
-    this.refreshData();
-  }
-
   async approveTokenTransfer() {
     const { amount, tokenContract } = this.state;
     const { contract, signer, erc20DetailedABI } = this.props;
@@ -91,7 +229,16 @@ class SellOrders extends Component {
         erc20DetailedABI,
         signer
       );
-      await erc20Contract.approve(contract.address, amount);
+      const tx = await erc20Contract.approve(
+        contract.address,
+        ethers.utils.formatEther(amount)
+      );
+      console.log(tx.hash);
+      await tx.wait();
+
+      alert(
+        "You've approved the transfer of your tokens to the exchange. You can now click 2. Desposit and Create"
+      );
     } catch (e) {
       console.log(e);
     }
@@ -101,13 +248,23 @@ class SellOrders extends Component {
     const { symbol, amount, ethRate, tokenContract } = this.state;
     const { contract } = this.props;
 
+    console.log(ethers.utils.parseEther(amount));
+    console.log(ethers.utils.parseEther(ethRate));
+
     try {
-      await contract.createTradeListing(
-        symbol,
-        ethers.utils.formatEther(amount),
-        ethers.utils.formatEther(ethRate),
+      const tx = await contract.createTradeListing(
+        ethers.utils.formatBytes32String(symbol),
+        ethers.utils.parseEther(amount),
+        ethers.utils.parseEther(ethRate),
         tokenContract
       );
+      console.log(tx.hash);
+      await tx.wait();
+
+      alert(
+        "Congrats you just deposited your tokens to the p2p exchange for trading"
+      );
+
       setTimeout(() => {
         this.refreshData();
       }, 5000);
@@ -116,45 +273,66 @@ class SellOrders extends Component {
     }
   }
 
-  async exchangeEtherForTokens(tradeID) {
+  async exchangeEtherForTokens(trade) {
+    const { contract } = this.props;
+    console.log("exchangeEtherForTokens.tradeID:", trade.id);
+    console.log("exchangeEtherForTokens.value:", trade.totalPrice);
+
+    try {
+      const tx = await contract.exchangeEtherForTokens(parseInt(trade.id), {
+        value: trade.totalPrice
+      });
+
+      console.log(tx.hash);
+      await tx.wait();
+
+      alert(
+        "Exchange complete. Add the token contract address to metamask so you can see the balance"
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async withdrawMyDepositedTokens(trade) {
+    const { contract } = this.props;
+
+    try {
+      const tx = await contract.withdrawMyDepositedTokens(parseInt(trade.id));
+
+      console.log(tx.hash);
+      await tx.wait();
+
+      alert(
+        "Your trade listing has been deleted. Check your balance you should have recieved your deposited tokens back"
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async callOracle() {
     const { contract } = this.props;
     try {
-      await contract.exchangeEtherForTokens(tradeID);
-      setTimeout(() => {
-        this.refreshData();
-      }, 5000);
+      const tx = await contract.callOracle();
+
+      console.log(tx.hash);
+      await tx.wait();
+
+      const priceETHUSD = await contract.priceETHUSD();
+      this.setState({ priceETHUSD });
     } catch (e) {
       console.log(e);
     }
   }
 
-  withdrawMyDepositedTokens(tradeID) {
-    return async () => {
-      const { contract } = this.props;
-      try {
-        await contract.withdrawMyDepositedTokens(tradeID);
-        setTimeout(() => {
-          this.refreshData();
-        }, 5000);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-  }
+  //-----------------------------------------------------------------
+  // Contract Calls
+  //-----------------------------------------------------------------
 
-  callOracle() {
-    return async () => {
-      // const { contract } = this.props;
-      // try {
-      //   await contract.callOracle();
-      //   setTimeout(() => {
-      //     this.refreshData();
-      //   }, 5000);
-      // } catch (e) {
-      //   console.log(e);
-      // }
-    };
-  }
+  //-----------------------------------------------------------------
+  // Rendering
+  //-----------------------------------------------------------------
 
   renderTradeListSection() {
     const { trades } = this.state;
@@ -189,12 +367,14 @@ class SellOrders extends Component {
                   <td>{trade.ethRate}</td>
                   <td>{trade.totalPrice}</td>
                   <td>
-                    <button onClick={this.exchangeEtherForTokens(trade.id)}>
+                    <button onClick={() => this.exchangeEtherForTokens(trade)}>
                       BUY
                     </button>
                   </td>
                   <td>
-                    <button onClick={this.withdrawMyDepositedTokens(trade.id)}>
+                    <button
+                      onClick={() => this.withdrawMyDepositedTokens(trade)}
+                    >
                       Withdraw
                     </button>
                   </td>
@@ -207,75 +387,85 @@ class SellOrders extends Component {
     );
   }
 
-  onSymbolChange(type) {
+  onSymbolChange() {
     return e => {
       this.setState({ symbol: e.target.value });
     };
   }
 
-  onTokenContractChange(type) {
+  onTokenContractChange() {
     return e => {
       this.setState({ tokenContract: e.target.value });
     };
   }
 
-  onAmountChange(type) {
+  onAmountChange() {
     return e => {
       this.setState({ amount: e.target.value });
     };
   }
 
-  onEthRateChange(type) {
+  onEthRateChange() {
     return e => {
       this.setState({ ethRate: e.target.value });
     };
   }
 
-  renderAddTradeSection(type) {
+  renderAddTradeSection() {
     return (
       <div className="panelSection">
         <h1>Create Sell Order</h1>
         <h4>Add ERC20 Token Trade Lising</h4>
-        <span>
-          <div>
-            <span>ERC20 Token Symbol</span>
-            <input
-              onChange={this.onSymbolChange(type)}
-              type="text"
-              placeholder={"SHT"}
-            />
+        <div className="div-table">
+          <div className="div-table-row">
+            <div className="div-table-cel">ERC20 Token Symbol</div>
+            <div className="div-table-cel">
+              <input
+                onChange={this.onSymbolChange()}
+                type="text"
+                placeholder={"SHT"}
+              />
+            </div>
           </div>
-          <div>
-            <span>ERC20 Token Contract Address</span>
-            <input
-              onChange={this.onTokenContractChange(type)}
-              type="text"
-              placeholder={"0x012334...."}
-            />
+          <div className="div-table-row">
+            <div className="div-table-cel">ERC20 Token Contract Address</div>
+            <div className="div-table-cel">
+              <input
+                onChange={this.onTokenContractChange()}
+                type="text"
+                placeholder={"0x012334...."}
+              />
+            </div>
           </div>
-          <div>
-            <span>How many tokens?</span>
-            <input
-              onChange={this.onAmountChange(type)}
-              type="text"
-              placeholder={"1000...."}
-            />
+          <div className="div-table-row">
+            <div className="div-table-cel">How many tokens?</div>
+            <div className="div-table-cel">
+              <input
+                onChange={this.onAmountChange()}
+                type="text"
+                placeholder={"1000...."}
+              />
+            </div>
           </div>
-          <div>
-            <span>ETH Rate / price in ETH per token</span>
-            <input
-              onChange={this.onEthRateChange(type)}
-              type="text"
-              placeholder={"0.0006...."}
-            />
+          <div className="div-table-row">
+            <div className="div-table-cel">
+              ETH Rate / price in ETH per token
+            </div>
+            <div className="div-table-cel">
+              <input
+                onChange={this.onEthRateChange()}
+                type="text"
+                placeholder={"0.0006...."}
+              />
+            </div>
           </div>
-          <div>
-            <button onClick={this.approveTokenTransfer}>Approve</button>
+          <div className="div-table-row">
+            <button onClick={this.approveTokenTransfer}>1. Approve</button>
             <button onClick={this.createTradeListing}>
-              Deposit Tokens and List Trade
+              2. Deposit Tokens and List Trade
             </button>
           </div>
-        </span>
+        </div>
       </div>
     );
   }
@@ -295,27 +485,29 @@ class SellOrders extends Component {
               <th />
             </tr>
           </thead>
-          <tr>
-            <td>{contract.address}</td>
-            <td>{priceETHUSD}</td>
-            <td>{tradeListCount}</td>
-            <td>
-              <button onClick={this.callOracle}>
-                Refresh ETHUSD Price from Oracle
-              </button>
-            </td>
-          </tr>
-          <tbody />
+          <tbody>
+            <tr>
+              <td>{contract.address}</td>
+              <td>{priceETHUSD}</td>
+              <td>{tradeListCount}</td>
+              <td>
+                <button onClick={() => this.callOracle()}>
+                  Refresh ETHUSD Price from Oracle
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     );
   }
 
   render() {
-    const { contract, signer, erc20DetailedABI } = this.props;
     return (
       <div>
-        <button onClick={this.refreshData}>Refresh</button>
+        <div>
+          <button onClick={this.refreshData()}>Force Refresh All Data</button>
+        </div>
         {this.renderContractInfoSection()}
         {this.renderAddTradeSection()}
         <h1>Sell Orders</h1>
