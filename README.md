@@ -28,10 +28,16 @@ Requirements:
 
 ## Run Tests
 
-1. Clone the repo
-2. Go into the root directory and run `npm install`
-3. Run Ganache CLI
-4. Run `truffle test`
+0. Clone the repo
+1. Install all the dependencies for the Truffle environment (Zeppelin library, ethers.js for the tests...etc).
+   ```
+   $ npm install
+   ```
+1. Start a local blockchain with Ganache. Make sure it is set on port 8545.
+   ```
+   $ ganache-cli -p 8545
+   ```
+1. Run `truffle test`
 
 You should see
 
@@ -95,15 +101,37 @@ When a buyer wants to execute a trade
 
 # Run the DAPP
 
-1. Go into the client folder and run `npm install`
-2. Run `npm run start`
-3. Make sure that MetaMask is connected to localhost:8545
+Steps:
 
-or run online
+1. Go the `client` directory and install all the app dependencies.
+   ```
+   $ cd client
+   $ npm install
+   ```
+2. As this app is using ether.js the `Contract` constructor will need the contract address. You will need to update the address in `App.js`.
+   ```
+   const SMART_CONTRACT_ADDRESS = new_contract_address
+   ```
+3. Start the React app.
+   ```
+   $ npm run start
+   ```
+4. Alternatively you can use the app locally with the deployed contracts addresses:
 
-- https://ipfs.io/ipfs/Qmb.....
+- Ropsten: https://ropsten.etherscan.io/token/0x
+- Rinkeby: https://rinkeby.etherscan.io/token/0x
 
-## Developer Bootcamp Final Project Evaluation Form
+## Deployed versions of the dApp
+
+Ropsten: https://p2ptokenexchange-ropsten.netlify.com
+
+Rinkeby: https://p2ptokenexchange-rinkeby.netlify.com
+
+KOVAN: https://p2ptokenexchange-kovan.netlify.com
+
+PFS: https://ipfs.io/ipfs/Qmb.....
+
+## Developer Bootcamp Final Project Evaluation Checklist
 
 - [x] A README.md that explains the project
   - [x] What does it do?

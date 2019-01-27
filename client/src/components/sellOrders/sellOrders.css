@@ -25,6 +25,10 @@ input {
   vertical-align: left;
 }
 
+.div-table-cel .divSymbol {
+  text-align: left;
+}
+
 .div-table {
   display: inline-block;
   display: table;
@@ -44,6 +48,7 @@ input {
   display: table-column;
   width: 300px;
   text-align: right;
+  margin-left: 10px;
 }
 
 .div-table-cel input {

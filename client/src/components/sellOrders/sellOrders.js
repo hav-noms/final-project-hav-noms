@@ -8,10 +8,10 @@ class SellOrders extends Component {
     this.state = {
       symbol: "",
       tokenContract: "",
-      amount: "",
-      ethRate: "",
-      tradeListCount: "",
-      priceETHUSD: "",
+      amount: 0,
+      ethRate: 0,
+      tradeListCount: 0,
+      priceETHUSD: 0,
       trades: null
     };
 
@@ -19,7 +19,7 @@ class SellOrders extends Component {
     this.withdrawMyDepositedTokens = this.withdrawMyDepositedTokens.bind(this);
     this.exchangeEtherForTokens = this.exchangeEtherForTokens.bind(this);
 
-    this.onSymbolChange = this.onSymbolChange.bind(this);
+    //this.onSymbolChange = this.onSymbolChange.bind(this);
     this.onTokenContractChange = this.onTokenContractChange.bind(this);
     this.onAmountChange = this.onAmountChange.bind(this);
     this.onEthRateChange = this.onEthRateChange.bind(this);
@@ -30,6 +30,10 @@ class SellOrders extends Component {
     this.refreshData = this.refreshData.bind(this);
 
     this.listenToContractEvents = this.listenToContractEvents.bind(this);
+    this.getTokenSymbolInline = this.getTokenSymbolInline.bind(this);
+    this.convertSymbolStringtoBytes4 = this.convertSymbolStringtoBytes4.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -95,8 +99,7 @@ class SellOrders extends Component {
       .toString();
 
     this.setState({ tradeListCount, priceETHUSD });
-    this.getMockTrades();
-    //this.getListOfTrades();
+    this.getTradesList();
   }
 
   async getTradesList() {
@@ -115,7 +118,7 @@ class SellOrders extends Component {
 
     ids.forEach((idInt, i) => {
       const id = idInt;
-      const symbol = ethers.utils.parseBytes32String(symbols[i]);
+      const symbol = this.getTokenSymbolInline(contracts[i]);
       const amount = ethers.utils.formatEther(amounts[i]);
       const ethRate = ethers.utils.formatEther(ethRates[i]);
       const totalPrice = ethers.utils.formatEther(totalPrices[i]);
@@ -143,84 +146,39 @@ class SellOrders extends Component {
     });
   }
 
-  /* 
-  async getListOfTrades() {
-    const { contract } = this.props;
-    let result;
-    let trades = [];
-
+  async getTokenSymbol(contractAddress) {
+    const { signer, erc20DetailedABI } = this.props;
     try {
-      result = await contract.getTradeList();
+      const erc20Contract = await new Contract(
+        contractAddress,
+        erc20DetailedABI,
+        signer
+      );
+
+      const tokenSymbol = await erc20Contract.symbol();
+
+      this.setState({ symbol: tokenSymbol });
     } catch (e) {
       console.log(e);
     }
-
-    if (result["ids"].length > 0) {
-      result.forEach((tradeID, i) => {
-        console.log("tradeID", tradeID);
-        const id = result["ids"][i];
-        const symbol = ethers.utils.parseBytes32String(result["symbols"][i]);
-        // const symbol = await this.getTokenSymbol(result["symbols"][i]);
-        const amount = result["amounts"][i];
-        const ethRate = result["ethRates"][i];
-        const totalPrice = result["totalPrices"][i];
-        const seller = result["seller"][i];
-        const contractAddress = result["contractAddress"][i];
-        trades.push({
-          id,
-          symbol,
-          amount,
-          ethRate,
-          totalPrice,
-          seller,
-          contractAddress
-        });
-      });
-      this.setState({ trades });
-    }
   }
- */
 
-  // async getMockTrades() {
-  //   const { contract } = this.props;
-  //   let trades = [];
-
-  //   trades.push({
-  //     id: 1,
-  //     symbol: "SHT",
-  //     amount: 1000,
-  //     ethRate: 0.0006,
-  //     totalPrice: 60000000000000000
-  //   });
-  //   trades.push({
-  //     id: 2,
-  //     symbol: "SHT",
-  //     amount: 10,
-  //     ethRate: 0.0008,
-  //     totalPrice: 60000000000000000
-  //   });
-  //   this.setState({ trades });
-  // }
-
-  getTokenSymbol(contractAddress) {
+  async getTokenSymbolInline(contractAddress) {
     const { signer, erc20DetailedABI } = this.props;
-    return async () => {
-      try {
-        const erc20Contract = await new Contract(
-          contractAddress,
-          erc20DetailedABI,
-          signer
-        );
-        return await erc20Contract.symbol();
-      } catch (e) {
-        console.log(e);
-      }
-    };
+
+    const erc20Contract = await new Contract(
+      contractAddress,
+      erc20DetailedABI,
+      signer
+    );
+    return await erc20Contract.symbol();
   }
 
   async approveTokenTransfer() {
     const { amount, tokenContract } = this.state;
     const { contract, signer, erc20DetailedABI } = this.props;
+
+    console.log("approveTokenTransfer of tokens", amount);
 
     //We need to approve() first
     try {
@@ -231,7 +189,7 @@ class SellOrders extends Component {
       );
       const tx = await erc20Contract.approve(
         contract.address,
-        ethers.utils.formatEther(amount)
+        ethers.utils.parseEther(amount).toString()
       );
       console.log(tx.hash);
       await tx.wait();
@@ -244,33 +202,44 @@ class SellOrders extends Component {
     }
   }
 
+  convertSymbolStringtoBytes4(symbolString) {
+    let symbolConverted = ethers.utils.formatBytes32String(symbolString);
+    return symbolConverted.substring(0, 10);
+  }
+
   async createTradeListing() {
     const { symbol, amount, ethRate, tokenContract } = this.state;
     const { contract } = this.props;
 
-    console.log(ethers.utils.parseEther(amount));
-    console.log(ethers.utils.parseEther(ethRate));
+    console.log("createTradeListing");
 
-    try {
-      const tx = await contract.createTradeListing(
-        ethers.utils.formatBytes32String(symbol),
-        ethers.utils.parseEther(amount),
-        ethers.utils.parseEther(ethRate),
-        tokenContract
-      );
-      console.log(tx.hash);
-      await tx.wait();
+    const symbolB4 = this.convertSymbolStringtoBytes4(symbol);
+    const amountInWei = ethers.utils.parseEther(amount).toString();
+    const ethRateInWei = ethers.utils.parseEther(ethRate).toString();
 
-      alert(
-        "Congrats you just deposited your tokens to the p2p exchange for trading"
-      );
+    console.log("symbolB4", symbolB4);
+    console.log("amount", amountInWei);
+    console.log("ethRate", ethRateInWei);
+    console.log("tokenContract", tokenContract);
+    //try {
+    const tx = await contract.createTradeListing(
+      amount,
+      ethRate,
+      tokenContract
+    );
+    console.log(tx.hash);
+    await tx.wait();
 
-      setTimeout(() => {
-        this.refreshData();
-      }, 5000);
-    } catch (e) {
-      console.log(e);
-    }
+    alert(
+      "Congrats you just deposited your tokens to the p2p exchange for trading"
+    );
+
+    setTimeout(() => {
+      this.refreshData();
+    }, 5000);
+    //} catch (e) {
+    //  console.log(e);
+    //}
   }
 
   async exchangeEtherForTokens(trade) {
@@ -336,6 +305,8 @@ class SellOrders extends Component {
 
   renderTradeListSection() {
     const { trades } = this.state;
+    const { accounts } = this.props;
+
     if (!trades || trades.length === 0)
       return (
         <div style={{ marginTop: "40px" }}>
@@ -353,6 +324,8 @@ class SellOrders extends Component {
               <th>Amount</th>
               <th>ETH Price</th>
               <th>Total Price</th>
+              <th>Seller</th>
+              <th>Contract</th>
               <th />
               <th />
             </tr>
@@ -366,17 +339,23 @@ class SellOrders extends Component {
                   <td>{trade.amount}</td>
                   <td>{trade.ethRate}</td>
                   <td>{trade.totalPrice}</td>
+                  <td>{trade.seller}</td>
+                  <td>{trade.contract}</td>
                   <td>
                     <button onClick={() => this.exchangeEtherForTokens(trade)}>
                       BUY
                     </button>
                   </td>
                   <td>
-                    <button
-                      onClick={() => this.withdrawMyDepositedTokens(trade)}
-                    >
-                      Withdraw
-                    </button>
+                    {trade.seller == accounts[0] ? (
+                      <button
+                        onClick={() => this.withdrawMyDepositedTokens(trade)}
+                      >
+                        Withdraw
+                      </button>
+                    ) : (
+                      <div />
+                    )}
                   </td>
                 </tr>
               );
@@ -396,6 +375,8 @@ class SellOrders extends Component {
   onTokenContractChange() {
     return e => {
       this.setState({ tokenContract: e.target.value });
+      //Lets get the Token Symbol
+      this.getTokenSymbol(e.target.value);
     };
   }
 
@@ -412,6 +393,8 @@ class SellOrders extends Component {
   }
 
   renderAddTradeSection() {
+    const { symbol } = this.state;
+
     return (
       <div className="panelSection">
         <h1>Create Sell Order</h1>
@@ -420,11 +403,7 @@ class SellOrders extends Component {
           <div className="div-table-row">
             <div className="div-table-cel">ERC20 Token Symbol</div>
             <div className="div-table-cel">
-              <input
-                onChange={this.onSymbolChange()}
-                type="text"
-                placeholder={"SHT"}
-              />
+              <div className="divSymbol">{symbol}</div>
             </div>
           </div>
           <div className="div-table-row">
@@ -505,9 +484,11 @@ class SellOrders extends Component {
   render() {
     return (
       <div>
-        <div>
-          <button onClick={this.refreshData()}>Force Refresh All Data</button>
-        </div>
+        {/* <div>
+          <button onClick={() => this.refreshData()}>
+            Force Refresh All Data
+          </button>
+        </div> */}
         {this.renderContractInfoSection()}
         {this.renderAddTradeSection()}
         <h1>Sell Orders</h1>

@@ -2,6 +2,7 @@ pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol";
 import "./SafeDecimalMath.sol";
 import "./Address.sol";
 import "./Mortal.sol";
@@ -30,7 +31,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         // The user that made the token deposit who wants to sell their tokens for ETH
         address payable seller;
         // The token symbol
-        bytes4 symbol;
+        string symbol;
         // The amount that they deposited for trading
         uint amount;
         // The ETH rate the person wants to sell their token for
@@ -103,7 +104,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         view
         returns(
             uint[] memory ids, 
-            bytes4[] memory symbols, 
+            //bytes4[] memory symbols, 
             uint[] memory amounts, 
             uint[] memory ethRates, 
             uint[] memory totalPrices,
@@ -116,7 +117,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
         // Setup return arrays for each property
         ids = new uint[](tradeCount);
-        symbols = new bytes4[](tradeCount);
+        //symbols = new bytes4[](tradeCount);
         amounts = new uint[](tradeCount);
         ethRates = new uint[](tradeCount);
         totalPrices = new uint[](tradeCount);
@@ -127,7 +128,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         for (uint i = 0; i < tradeCount; i++) {
             if (tradeListings[i].totalPrice != 0) {
                 ids[i] = i; 
-                symbols[i] = tradeListings[i].symbol;      
+                //symbols[i] = tradeListings[i].symbol;      
                 amounts[i] = tradeListings[i].amount;      
                 ethRates[i] = tradeListings[i].ethRate;      
                 totalPrices[i] = tradeListings[i].totalPrice; 
@@ -143,7 +144,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     function getTrade(uint id) 
         public 
         view 
-    returns(bytes4 symbol, uint amount, uint ethRate, uint totalPrice, address tokenContractAddress, address seller) {
+    returns(string memory symbol, uint amount, uint ethRate, uint totalPrice, address tokenContractAddress, address seller) {
         symbol = tradeListings[id].symbol; 
         amount = tradeListings[id].amount;
         ethRate = tradeListings[id].ethRate;
@@ -158,13 +159,11 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
 
     /**
      * @notice createTradeListing: Allows users to deposit tokens via the ERC20 approve / transferFrom workflow
-     * @param symbol The ERC20 token symbol
      * @param amount The amount of tokens you wish to deposit (must have been approved first)
      * @param ethRate The price of ETH the seller wants per token
      * @param tokenContract The address of the token contract
      */
     function createTradeListing(
-            bytes4 symbol,  
             uint amount, 
             uint ethRate,
             address tokenContract)
@@ -192,13 +191,13 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         tradeID.push(newTradeID);
 
         // Create a tradeListing
-        uint totalPrice = amount.multiplyDecimal(ethRate);
+        uint _totalPrice = amount.multiplyDecimal(ethRate);
         tradeListings[newTradeID] = TradeListing({ 
             seller: messageSender, 
-            symbol: symbol,
+            symbol: ERC20Detailed(tokenContract).symbol(),
             amount: amount, 
             ethRate: ethRate, 
-            totalPrice: totalPrice,
+            totalPrice: _totalPrice,
             tokenContractAddress: tokenContract});
         
         // Tell the DApps we have a new trade listed
@@ -321,7 +320,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
         //delete tradeListings[listingID]; was causing VM error and reverting
 
         // Clear struct values in mapping but the one reverting the EVM
-        tradeListings[listingID].symbol = bytes4("");
+        tradeListings[listingID].symbol = string("");
         tradeListings[listingID].seller = address(0);
         tradeListings[listingID].tokenContractAddress = address(0);
         tradeListings[listingID].amount = 0;
@@ -372,7 +371,7 @@ contract TokenExchange is Pausable, Proxyable, Mortal, ETHPriceTicker {
     /**
      * @notice emit when a buyer has successfully bought a sellers tokens with ETH
      */
-    event Exchange(string fromSymbol, uint fromAmount, bytes4 toSymbol, uint toAmount);
+    event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
     
     /**
      * @notice emit when a seller has successfuly withdrawn their tokens and removes the trade listing

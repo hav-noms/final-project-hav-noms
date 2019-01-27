@@ -89,7 +89,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Create a trade listing on the TokenExchange
         await assert.revert(
           tokenExchange.createTradeListing(
-            web3.utils.fromAscii(await shartCoin.symbol()),
             numberOfTokens,
             tokenPriceInETH,
             shartCoin.address,
@@ -110,7 +109,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Create a trade listing on the TokenExchange sending the token price as zero
         await assert.revert(
           tokenExchange.createTradeListing(
-            web3.utils.fromAscii(await shartCoin.symbol()),
             0,
             tokenPriceInETH,
             shartCoin.address,
@@ -125,7 +123,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Create a trade listing on the TokenExchange sending ethRate as zero
         await assert.revert(
           tokenExchange.createTradeListing(
-            web3.utils.fromAscii(await shartCoin.symbol()),
             numberOfTokens,
             0,
             shartCoin.address,
@@ -139,15 +136,9 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
       it("should revert if the address supplied is not a contract", async function() {
         // Create a trade listing on the TokenExchange providing a wallet address instead of the contract
         await assert.revert(
-          tokenExchange.createTradeListing(
-            web3.utils.fromAscii(await shartCoin.symbol()),
-            0,
-            tokenPriceInETH,
-            account3,
-            {
-              from: deployerAccount
-            }
-          )
+          tokenExchange.createTradeListing(0, tokenPriceInETH, account3, {
+            from: deployerAccount
+          })
         );
       });
 
@@ -157,7 +148,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Create a trade listing on the TokenExchange
         await assert.revert(
           tokenExchange.createTradeListing(
-            web3.utils.fromAscii(await shartCoin.symbol()),
             numberOfTokens,
             tokenPriceInETH,
             shartCoin.address,
@@ -184,7 +174,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Create a trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          web3.utils.fromAscii(await shartCoin.symbol()),
           numberOfTokens,
           tokenPriceInETH,
           shartCoin.address,
@@ -209,10 +198,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Check all of the return values
         assert.equal(tradeListing.seller, deployerAccount);
-        assert.equal(
-          await shartCoin.symbol(),
-          web3.utils.toAscii(tradeListing.symbol).replace(/\0/g, "") // remove trailing zeros
-        );
+        assert.equal(tradeListing.symbol, await shartCoin.symbol());
         assert.bnEqual(tradeListing.amount, numberOfTokens);
         assert.bnEqual(tradeListing.ethRate, tokenPriceInETH);
         assert.bnEqual(tradeListing.totalPrice, ETHtoSend);
@@ -251,7 +237,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Create a 2nd trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          web3.utils.fromAscii(await shartCoin.symbol()),
           numberOfTokens,
           tokenPriceInETH,
           shartCoin.address,
@@ -276,7 +261,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Iterate the array rows packing the data back into an objet
         for (i = 0; i < 2; i++) {
           id = results["ids"][i];
-          symbol = web3.utils.toAscii(results["symbols"][i]).replace(/\0/g, "");
+          //symbol = web3.utils.toAscii(results["symbols"][i]).replace(/\0/g, "");
           amount = results["amounts"][i];
           ethRate = results["ethRates"][i];
           totalPrice = results["totalPrices"][i];
@@ -284,7 +269,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           seller = results["sellers"][i];
           tradesRepacked.push({
             id,
-            symbol,
+            //symbol,
             amount,
             ethRate,
             totalPrice,
@@ -319,7 +304,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Create a 2nd trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          web3.utils.fromAscii(await shartCoin.symbol()),
           numberOfTokens,
           tokenPriceInETH,
           shartCoin.address,
@@ -331,10 +315,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
         // Get the first tradeListing from the contract
         const trade = await tokenExchange.getTrade(1);
         assert.equal(trade.seller, deployerAccount);
-        assert.equal(
-          await shartCoin.symbol(),
-          web3.utils.toAscii(trade.symbol).replace(/\0/g, "") // remove trailing zeros
-        );
+        assert.equal(trade.symbol, await shartCoin.symbol());
         assert.bnEqual(trade.amount, numberOfTokens);
         assert.bnEqual(trade.ethRate, tokenPriceInETH);
         assert.bnEqual(trade.totalPrice, ETHtoSend);
@@ -362,7 +343,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Create a trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          web3.utils.fromAscii(await shartCoin.symbol()),
           numberOfTokens,
           tokenPriceInETH,
           shartCoin.address,
@@ -401,10 +381,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Assert the tradeListing struct is empty
         const tradeListing = await tokenExchange.tradeListings(0);
-        assert.equal(
-          web3.utils.toAscii(tradeListing.symbol).replace(/\0/g, ""), //BytesToAscii Conversion leaves it full of zeros
-          ""
-        );
+        assert.equal(tradeListing.symbol, "");
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
         assert.bnEqual(tradeListing.totalPrice, 0);
@@ -457,7 +434,6 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Create a trade listing on the TokenExchange
         transaction = await tokenExchange.createTradeListing(
-          web3.utils.fromAscii(await shartCoin.symbol()),
           numberOfTokens,
           tokenPriceInETH,
           shartCoin.address,
@@ -499,10 +475,7 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
 
         // Assert the tradeListing struct is empty
         const tradeListing = await tokenExchange.tradeListings(0);
-        assert.equal(
-          web3.utils.toAscii(tradeListing.symbol).replace(/\0/g, ""), //BytesToAscii Conversion leaves it full of zeros
-          ""
-        );
+        assert.equal(tradeListing.symbol, "");
         assert.bnEqual(tradeListing.amount, 0);
         assert.bnEqual(tradeListing.ethRate, 0);
         //assert.bnEqual(tradeListing.totalPrice, 0);
@@ -585,15 +558,11 @@ contract("TokenExchange - Test contract deployment", function(accounts) {
           value: ETHtoSend
         });
 
-        //Prep the symbol fromAscii to HEX from bytes4 in solidity
-        let symbolConverted = web3.utils.fromAscii(await shartCoin.symbol());
-        symbolConverted = web3.utils.padRight(symbolConverted, 8);
-
         // Assert event Exchange(string fromSymbol, uint fromAmount, string toSymbol, uint toAmount);
         assert.eventEqual(transaction, "Exchange", {
           fromSymbol: "ETH",
           fromAmount: ETHtoSend,
-          toSymbol: symbolConverted,
+          toSymbol: await shartCoin.symbol(),
           toAmount: numberOfTokens
         });
       });
