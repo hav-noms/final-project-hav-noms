@@ -84,6 +84,8 @@ Rinkeby:
 
 Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
+To test the ROPSTEN connected DAPP you can buy the existing SHT coin tokens for ROPSTEN ETH and then sell them back to the exchange to create a listing. Or send any ERC20 on ROPSTEN to create a listing. Or ping me and I'll send you some SHT.
+
 IPFS: https://ipfs.io/ipfs/Qmb.....
 
 ## Developer Bootcamp Final Project Evaluation Checklist
