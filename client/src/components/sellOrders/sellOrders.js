@@ -35,6 +35,7 @@ class SellOrders extends Component {
     this.convertSymbolStringtoBytes4 = this.convertSymbolStringtoBytes4.bind(
       this
     );
+    this.ZERO_ADDRESS = "0x" + "0".repeat(40);
   }
 
   componentDidMount() {
@@ -118,6 +119,9 @@ class SellOrders extends Component {
     ] = await contract.getTradeList();
 
     ids.forEach(async (idInt, i) => {
+      if (contracts[i] === this.ZERO_ADDRESS) {
+        return;
+      }
       const id = idInt.toString();
       const symbol = await this.getTokenSymbolInline(contracts[i]);
       const amount = ethers.utils.formatEther(amounts[i]);
@@ -135,7 +139,7 @@ class SellOrders extends Component {
         contract,
         seller
       });
-
+      //update the state
       this.setState({ trades });
     });
   }
@@ -143,6 +147,8 @@ class SellOrders extends Component {
   async getTokenSymbolInline(contractAddress) {
     const { signer, erc20DetailedABI } = this.props;
     console.log("getTokenSymbolInline");
+
+    if (contractAddress === this.ZERO_ADDRESS) return "";
 
     const erc20Contract = await new Contract(
       contractAddress,
@@ -218,7 +224,6 @@ class SellOrders extends Component {
     console.log("amount", amountInWei);
     console.log("ethRate", ethRateInWei);
     console.log("tokenContract", tokenContract);
-    //try {
     const tx = await contract.createTradeListing(
       amountInWei,
       ethRateInWei,
@@ -231,12 +236,9 @@ class SellOrders extends Component {
       "Congrats you just deposited your tokens to the p2p exchange for trading"
     );
 
-    setTimeout(() => {
-      this.refreshData();
-    }, 5000);
-    //} catch (e) {
-    //  console.log(e);
-    //}
+    // setTimeout(() => {
+    //   this.refreshData();
+    // }, 5000);
   }
 
   async exchangeEtherForTokens(trade) {
@@ -244,9 +246,14 @@ class SellOrders extends Component {
     console.log("exchangeEtherForTokens.tradeID:", trade.id);
     console.log("exchangeEtherForTokens.value:", trade.totalPrice);
 
+    const totalPriceInWei = ethers.utils
+      .parseEther(trade.totalPrice)
+      .toString();
+    console.log("totalPriceInWei.value:", totalPriceInWei);
+
     try {
       const tx = await contract.exchangeEtherForTokens(parseInt(trade.id), {
-        value: trade.totalPrice
+        value: totalPriceInWei
       });
 
       console.log(tx.hash);
