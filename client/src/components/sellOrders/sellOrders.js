@@ -117,14 +117,15 @@ class SellOrders extends Component {
       sellers
     ] = await contract.getTradeList();
 
-    ids.forEach((idInt, i) => {
+    ids.forEach(async (idInt, i) => {
       const id = idInt.toString();
-      const symbol = this.getTokenSymbolInline(contracts[i]);
+      const symbol = await this.getTokenSymbolInline(contracts[i]);
       const amount = ethers.utils.formatEther(amounts[i]);
       const ethRate = ethers.utils.formatEther(ethRates[i]);
       const totalPrice = ethers.utils.formatEther(totalPrices[i]);
       const contract = contracts[i];
       const seller = sellers[i];
+
       trades.push({
         id,
         symbol,
@@ -134,16 +135,10 @@ class SellOrders extends Component {
         contract,
         seller
       });
-      console.log({
-        id,
-        symbol,
-        amount,
-        ethRate,
-        totalPrice,
-        contract,
-        seller
-      });
-      this.setState({ trades });
+
+      setTimeout(() => {
+        this.setState({ trades });
+      }, 2000);
     });
   }
 
