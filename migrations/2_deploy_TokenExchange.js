@@ -91,6 +91,7 @@ module.exports = async function(deployer, network, accounts) {
   // ----------------
   console.log("Deploying Proxy...");
   const tokenExchangeProxy = await Proxy.new({ from: deployerAccount });
+  //const tokenExchangeProxy = await deployer.deploy({ from: deployerAccount });
 
   // ----------------
   // TokenExchange

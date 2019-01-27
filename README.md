@@ -133,7 +133,7 @@ Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
 Rinkeby: https://p2ptokenexchange-rinkeby.netlify.com
 
-KOVAN: https://p2ptokenexchange-kovan.netlify.com
+kovan: https://p2ptokenexchange-kovan.netlify.com
 
 PFS: https://ipfs.io/ipfs/Qmb.....
 

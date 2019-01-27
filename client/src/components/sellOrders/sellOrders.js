@@ -31,6 +31,7 @@ class SellOrders extends Component {
 
     this.listenToContractEvents = this.listenToContractEvents.bind(this);
     this.getTokenSymbolInline = this.getTokenSymbolInline.bind(this);
+    this.getTradesList = this.getTradesList.bind(this);
     this.convertSymbolStringtoBytes4 = this.convertSymbolStringtoBytes4.bind(
       this
     );
@@ -117,7 +118,7 @@ class SellOrders extends Component {
     ] = await contract.getTradeList();
 
     ids.forEach((idInt, i) => {
-      const id = idInt;
+      const id = idInt.toString();
       const symbol = this.getTokenSymbolInline(contracts[i]);
       const amount = ethers.utils.formatEther(amounts[i]);
       const ethRate = ethers.utils.formatEther(ethRates[i]);
@@ -146,6 +147,20 @@ class SellOrders extends Component {
     });
   }
 
+  async getTokenSymbolInline(contractAddress) {
+    const { signer, erc20DetailedABI } = this.props;
+    console.log("getTokenSymbolInline");
+
+    const erc20Contract = await new Contract(
+      contractAddress,
+      erc20DetailedABI,
+      signer
+    );
+    const tokenSymbol = await erc20Contract.symbol();
+    console.log("getTokenSymbolInline:", tokenSymbol);
+    return tokenSymbol;
+  }
+
   async getTokenSymbol(contractAddress) {
     const { signer, erc20DetailedABI } = this.props;
     try {
@@ -161,17 +176,6 @@ class SellOrders extends Component {
     } catch (e) {
       console.log(e);
     }
-  }
-
-  async getTokenSymbolInline(contractAddress) {
-    const { signer, erc20DetailedABI } = this.props;
-
-    const erc20Contract = await new Contract(
-      contractAddress,
-      erc20DetailedABI,
-      signer
-    );
-    return await erc20Contract.symbol();
   }
 
   async approveTokenTransfer() {
@@ -223,8 +227,8 @@ class SellOrders extends Component {
     console.log("tokenContract", tokenContract);
     //try {
     const tx = await contract.createTradeListing(
-      amount,
-      ethRate,
+      amountInWei,
+      ethRateInWei,
       tokenContract
     );
     console.log(tx.hash);
