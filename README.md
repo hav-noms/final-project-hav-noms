@@ -70,11 +70,11 @@ Steps:
 
 Ropsten:
 
-- TokenExchange: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+- TokenExchange: https://ropsten.etherscan.io/address/0xF371b912B26d3c9220e4e7cbC312591E6074721A
 - TokenExchange ABI https://gist.github.com/hav-noms/4da6852c9656e10217cfda83f998bdd3
-- Proxy: https://ropsten.etherscan.io/token/0x5f05f53A0E3E19A0de45b0Ac85100e3e61aE7EE4
+- Proxy: https://ropsten.etherscan.io/address/0x5f05f53A0E3E19A0de45b0Ac85100e3e61aE7EE4
 - ShartCoin: https://ropsten.etherscan.io/token/0x651d56e6cCe013cf08C32b7E53cD2A1cbf103976
-- TokenExchangeState: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+- TokenExchangeState: https://ropsten.etherscan.io/address/0xF371b912B26d3c9220e4e7cbC312591E6074721A
 
 Rinkeby:
 
