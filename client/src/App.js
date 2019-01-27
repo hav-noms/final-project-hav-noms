@@ -5,7 +5,7 @@ import ERC20Detailed from "./contracts/ERC20Detailed.json";
 import { ethers, Contract } from "ethers";
 import P2PTokenExchange from "./pages/p2pTokenExchange";
 
-const SMART_CONTRACT_ADDR = "0x4BF3D0A8f10178B184bd4815AE8c23B3afcCc358";
+const SMART_CONTRACT_ADDR = "0xF371b912B26d3c9220e4e7cbC312591E6074721A";
 const SMART_CONTRACT_ENS = "p2ptokenexchange.eth";
 
 class App extends Component {

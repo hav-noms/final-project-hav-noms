@@ -108,7 +108,7 @@ class SellOrders extends Component {
 
     const [
       ids,
-      symbols,
+      //symbols,
       amounts,
       ethRates,
       totalPrices,
@@ -347,7 +347,7 @@ class SellOrders extends Component {
                     </button>
                   </td>
                   <td>
-                    {trade.seller == accounts[0] ? (
+                    {trade.seller === accounts[0] ? (
                       <button
                         onClick={() => this.withdrawMyDepositedTokens(trade)}
                       >

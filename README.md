@@ -118,7 +118,13 @@ Steps:
    ```
 4. Alternatively you can use the app locally with the deployed contracts addresses:
 
-- Ropsten: https://ropsten.etherscan.io/token/0x
+- Ropsten:
+
+  - TokenExchange: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+  - Proxy: https://ropsten.etherscan.io/token/0x5f05f53A0E3E19A0de45b0Ac85100e3e61aE7EE4
+  - ShartCoin: https://ropsten.etherscan.io/token/0x651d56e6cCe013cf08C32b7E53cD2A1cbf103976
+  - TokenExchangeState: https://ropsten.etherscan.io/token/0xF371b912B26d3c9220e4e7cbC312591E6074721A
+
 - Rinkeby: https://rinkeby.etherscan.io/token/0x
 
 ## Deployed versions of the dApp
