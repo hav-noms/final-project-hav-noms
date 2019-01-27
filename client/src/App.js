@@ -9,7 +9,7 @@ const SMART_CONTRACT_ADDR_ROPSTEN =
   "0xf371b912b26d3c9220e4e7cbc312591e6074721a";
 const SMART_CONTRACT_ADDR_LOCAL = "";
 const SMART_CONTRACT_ENS = "p2ptokenexchange.eth";
-
+// Set this const to your chosen ENV
 const SMART_CONTRACT_ADDR = SMART_CONTRACT_ADDR_ROPSTEN;
 
 class App extends Component {
