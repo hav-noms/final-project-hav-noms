@@ -78,7 +78,7 @@ Ropsten:
 
 Rinkeby:
 
-- https://rinkeby.etherscan.io/token/0x
+- I did not deploy to rinkeby as ENS is not available on Rikeby only Ropsten
 
 ## Deployed versions of the dApp
 
