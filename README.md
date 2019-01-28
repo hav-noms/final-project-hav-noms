@@ -9,7 +9,7 @@ This project focuses on the best patterns and practices implementation from the 
 
 ## User Journey
 
-- Navigate to the REACT Dapp on IPFS https://ipfs.io/ipfs/Qmb.....
+- Navigate to the REACT Dapp on IPFS https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 - See a list of available trades or
 - Create a trade listing and deposit your ERC20 Tokens escrowed in the contract
 - Buyers can select a trade to fulfil and send ETH to the contract and will be send your tokens, you will be sent the ETH
