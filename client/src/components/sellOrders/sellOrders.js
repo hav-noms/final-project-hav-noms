@@ -11,6 +11,7 @@ class SellOrders extends Component {
       amount: 0,
       ethRate: 0,
       tradeListCount: 0,
+      activeTradeCount: "0",
       priceETHUSD: 0,
       trades: null
     };
@@ -107,6 +108,7 @@ class SellOrders extends Component {
   async getTradesList() {
     const { contract } = this.props;
     let trades = [];
+    let activeTradeCount = 0;
 
     const [
       ids,
@@ -139,8 +141,9 @@ class SellOrders extends Component {
         contract,
         seller
       });
+      activeTradeCount++;
       //update the state
-      this.setState({ trades });
+      this.setState({ trades, activeTradeCount });
     });
   }
 
@@ -253,7 +256,7 @@ class SellOrders extends Component {
 
     try {
       const tx = await contract.exchangeEtherForTokens(parseInt(trade.id), {
-        value: totalPriceInWei
+        value: ethers.utils.parseEther(trade.totalPrice)
       });
 
       console.log(tx.hash);
@@ -470,7 +473,7 @@ class SellOrders extends Component {
   }
 
   renderContractInfoSection() {
-    const { tradeListCount, priceETHUSD } = this.state;
+    const { activeTradeCount, priceETHUSD } = this.state;
     const { contract } = this.props;
 
     return (
@@ -488,7 +491,7 @@ class SellOrders extends Component {
             <tr>
               <td>{contract.address}</td>
               <td>{priceETHUSD}</td>
-              <td>{tradeListCount}</td>
+              <td>{activeTradeCount}</td>
               <td>
                 <button onClick={() => this.callOracle()}>
                   Refresh ETHUSD Price from Oracle
