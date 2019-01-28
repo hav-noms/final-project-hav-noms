@@ -148,7 +148,7 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 
 - [x] Deploy your application onto one of the test networks.
 - [x] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
-- [ ] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
+- [x] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
 - [x] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
 - [x] Serve the UI from IPFS or a traditional web server
   - [x] Traditional Web Server https://p2ptokenexchange-ropsten.netlify.com
