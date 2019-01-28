@@ -86,7 +86,7 @@ Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
 To test the ROPSTEN connected DAPP you can buy the existing SHT coin tokens for ROPSTEN ETH and then sell them back to the exchange to create a listing. Or send any ERC20 on ROPSTEN to create a listing. Or ping me and I'll send you some SHT.
 
-IPFS: https://ipfs.io/ipfs/QmdN5yNM4n35buFGN64EKpYgqVxUrX17i8CKxuL5NdTdYY
+IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 
 ## Developer Bootcamp Final Project Evaluation Checklist
 
@@ -164,25 +164,25 @@ IPFS: https://ipfs.io/ipfs/QmdN5yNM4n35buFGN64EKpYgqVxUrX17i8CKxuL5NdTdYY
 - [x] Oracle
   - [x] Implemented Oracalize for ETHUSD pricing
 - [x] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
-  - [x] Add DAPP to IPFS https://ipfs.io/ipfs/QmdN5yNM4n35buFGN64EKpYgqVxUrX17i8CKxuL5NdTdYY
-        added QmWM6ARdaeaj4VywUkYqAheHZAJgJ3WThHHQB5yP8wt8Hj build/asset-manifest.json
+  - [x] Add DAPP to IPFS https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
+        added QmcwoNLGnaTNdb9VTfySRoUVtQZCeaJzZsxMsFLkQotEVg build/asset-manifest.json
         added QmcFc6EPhavNSfdjG8byaxxV6KtHZvnDwYXLHvyJQPp3uN build/favicon.ico
-        added QmdN5yNM4n35buFGN64EKpYgqVxUrX17i8CKxuL5NdTdYY build/index.html
+        added QmSpVu85Qj9dzdcC1AD7YR4bBYjNydqpp3HwSsfGVfMvYW build/index.html
         added QmfKqCqGsesAk1JhovJCQajk8awxuqjDPc8QnHa39oDx6g build/manifest.json
-        added QmXJph8qat5t2mujeDkm4icdDx5cTnsNo37pwDh78myPFX build/precache-manifest.6858d106b39db0935e08f7d8b5d3cf31.js
-        added QmYtCnhaenmZPzM3QAyCvkVWxyyonEx2WmqSuxZwsWcWaq build/service-worker.js
+        added QmVVkxzmHY5ReSoQ9GX4RobwihGKsfrzY8E7inoFbjGbEg build/precache-manifest.cfdc5fea3d15a319614b8b50fd809d3d.js
+        added QmQ1Zd5fuxxTTavLyhS5G479h1CkMvY2puuGY46282Z17x build/service-worker.js
         added QmSt4HmAP8H7z8jY7Ydf2PeogMNm14VENGLaXQSDxsmMZN build/static/css/main.f5d2a5b6.chunk.css
         added QmQYh4kdU8Ctxaib7f7MTYGrsWcmTJfj9RvhkideTAVPzw build/static/css/main.f5d2a5b6.chunk.css.map
         added QmexaqtgBN1fUcoECoMbrGjbQU8v7jSEsWnj6MKwYbYgvB build/static/js/1.34cad1e0.chunk.js
         added QmXVBvearMWSfvw62B4etaFpGBx1cKX5pLLbLccgCwhtH2 build/static/js/1.34cad1e0.chunk.js.map
         added Qme9z3JjbFdfRpYNH84HxQukBn18GsRQNS9rE2se7ty9yc build/static/js/main.47c69635.chunk.js
         added QmeYTCfKi4Lv3fRrzNvre7wxz8iEztbcwfZ4CSgSZoPEb7 build/static/js/main.47c69635.chunk.js.map
-        added QmXMf5jh5NJkmP77Cxisz7joqVdYCQq2YDnmYpUL2ZtCo5 build/static/js/runtime~main.229c360f.js
-        added QmPdJpgMSyCN3WxjwxXC8ScjDeB2358Rj5odR49c1BpHvu build/static/js/runtime~main.229c360f.js.map
+        added QmVfzdU72f7TuF196YVC629gf2GT18Z9dRhua9oahKFFAR build/static/js/runtime~main.4a686d48.js
+        added QmSYyfTZ5yeX113i31TiTr3cov8jzGA54JRxKiFzPrqEMp build/static/js/runtime~main.4a686d48.js.map
         added QmPphPgkWdFQF6NcAjXivW68UvUAL5Ui5UihKr2CvLjpKi build/static/css
-        added Qmcy2C7TmmR1iaC2vWTttxQ2c87ZcnQuKAipGnzzE6WgeD build/static/js
-        added QmQq7WdA9WVwUVkHUFAWoYEBRhugFm4dhXZ9tPYHvPzmZ8 build/static
-        added QmYcq8taDY6FAxKYUji9SmTdYp6tzrCLuCNEzZuQnx4S4F build
+        added QmcL7Eo15EQAqnzzcmrWn1sWMqY9VPFKpZbBKgTKbLUUgZ build/static/js
+        added QmdJcRert6m7eVj9KFVbkSVSyn9U4De1LxMvp8jFV36FR8 build/static
+        added QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu build
 - [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
   - [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
 
