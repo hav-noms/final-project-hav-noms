@@ -196,4 +196,5 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
   - [x] ENS name p2ptokenexchange.eth verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
 - [ ] Vyper Contract
 
-![alt text](ens_bid.png "Dapp UI")
+![ENS Auction](ens_bid.png "ENS Auction")
+![ENS Config](ens_config.png "ENS Config")
