@@ -116,7 +116,7 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 - [x] Run the dapp on a development server locally for testing and grading.
   - [x] Testing on Ropsten; (I chose ropsten instead of rinkeby becuase there is no ENS on rinkeby)
 - [x] You should be able to visit a URL (can be localhost) and interact with the application
-  - [x] localhost
+  - [x] localhost via `npm run start` in `client` dir
   - [x] https://p2ptokenexchange-ropsten.netlify.com
 - [x] Display the current account;
 - [x] Sign transactions using MetaMask;
@@ -149,6 +149,10 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 - [x] Deploy your application onto one of the test networks.
 - [x] Include a document called [deployed_addresses.txt](deployed_addresses.txt) that describes where your contracts live (which testnet and address).
 - [x] Students can verify their source code using Etherscan https://etherscan.io/verifyContract for the appropriate testnet.
+  - [x] ROPSTEN VERIFIED TokenExchange https://ropsten.etherscan.io/address/0xf371b912b26d3c9220e4e7cbc312591e6074721a#code
+  - [x] ROPSTEN VERIFIED Proxy https://ropsten.etherscan.io/address/0x5f05f53a0e3e19a0de45b0ac85100e3e61ae7ee4#code
+  - [x] ROPSTEN VERIFIED TokenExchangeState https://ropsten.etherscan.io/address/0x3b37170210ffab1e7d87e21d273aa1faa7dc8509#code
+  - [x] ROPSTEN VERIFIED ShartCoin https://ropsten.etherscan.io/address/0x651d56e6cCe013cf08C32b7E53cD2A1cbf103976#code
 - [x] Evaluators can check by getting the provided contract ABI and calling a function on the deployed contract at https://www.myetherwallet.com/#contracts or checking the verification on Etherscan.
 - [x] Serve the UI from IPFS or a traditional web server
   - [x] Traditional Web Server https://p2ptokenexchange-ropsten.netlify.com
@@ -164,7 +168,7 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
   - [x] implemented proxy and external storage pattern
 - [x] Oracle
   - [x] Implemented Oracalize for ETHUSD pricing
-- [x] IPFS - users can dynamically upload documents to IPFS that are referenced via their smart contract.
+- [x] IPFS
   - [x] Add DAPP to IPFS https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
         added QmcwoNLGnaTNdb9VTfySRoUVtQZCeaJzZsxMsFLkQotEVg build/asset-manifest.json
         added QmcFc6EPhavNSfdjG8byaxxV6KtHZvnDwYXLHvyJQPp3uN build/favicon.ico
@@ -184,7 +188,12 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
         added QmcL7Eo15EQAqnzzcmrWn1sWMqY9VPFKpZbBKgTKbLUUgZ build/static/js
         added QmdJcRert6m7eVj9KFVbkSVSyn9U4De1LxMvp8jFV36FR8 build/static
         added QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu build
-- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract, verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
-  - [x] ENS Auction created for p2ptokenexchange https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
+- [x] Ethereum Name Service - a name registered on the ENS resolves to the contract
+  - [x] ENS Auction created for p2ptokenexchange.eth https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
+  - [x] ENS unseal Bid https://ropsten.etherscan.io/tx/0xc440a13409a0bb8c2fde4bb2ed0643916a4ef221d852fa2a58c9bf32e79a98b9
+  - [x] ENS Auction finalized https://ropsten.etherscan.io/tx/0x695147dcfd3f86f9eb6652595a0baa287f010d463909afc6a5efa4bac9a01f2d
+  - [x] ENS Resolver, Public Name & Address set to 0xF371b912B26d3c9220e4e7cbC312591E6074721A https://ropsten.etherscan.io/tx/0xe811d55d3d1500590c883b7c2e2677a08f47f0973157f9d8d9e5e1b209e263c2
+  - [x] ENS name p2ptokenexchange.eth verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
+- [ ] Vyper Contract
 
 ![alt text](ens_bid.png "Dapp UI")

@@ -489,7 +489,15 @@ class SellOrders extends Component {
           </thead>
           <tbody>
             <tr>
-              <td>{contract.address}</td>
+              <td>
+                <a
+                  href={`https://ropsten.etherscan.io/address/${
+                    contract.address
+                  }`}
+                >
+                  {contract.address}
+                </a>
+              </td>
               <td>{priceETHUSD}</td>
               <td>{activeTradeCount}</td>
               <td>
