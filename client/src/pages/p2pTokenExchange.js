@@ -43,6 +43,14 @@ class P2PTokenExchange extends Component {
     return (
       <div className="p2pTokenExchange">
         <h1>Decentralized p2p Token Exchange</h1>
+        <h2>
+          {/* <a
+            target="_new"
+            href="https://ropsten.etherscan.io/p2ptokenexchange.eth"
+          >
+            p2ptokenexchange.eth
+          </a> */}
+        </h2>
         <span>Sell your tokens for ETH. No fees. No middle man.</span>
         <h3>
           Your address:&nbsp;
