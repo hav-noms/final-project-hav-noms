@@ -39,7 +39,9 @@ try {
     .trim();
   console.log("mnemonic:", mnemonic);
 } catch (e) {
-  console.log(e);
+  console.log(
+    "If you want to deploy to a TESTNET then create these files infura_key.secret, mnemonic.secret"
+  );
 }
 
 module.exports = {

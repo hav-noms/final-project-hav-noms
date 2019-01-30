@@ -15,7 +15,7 @@ This project focuses on the best patterns and practices implementation from the 
 - Buyers can select a trade to fulfil and send ETH to the contract and will be send your tokens, you will be sent the ETH
 - Withdraw your trade listing and have your tokens returned to you
 
-![DApp ui](ui.png "Dapp UI")
+![DApp ui](/imgs/ui.png "Dapp UI")
 
 ## Setup
 
@@ -30,12 +30,12 @@ Requirements:
 
 ## Run Tests
 
-0. Clone the repo
+1. Clone the repo and cd into the folder
 1. Install all the dependencies for the Truffle environment (Zeppelin library, ethers.js for the tests...etc).
    ```
    $ npm install
    ```
-1. Start a local blockchain with Ganache. Make sure it is set on port 8545.
+1. Start a local blockchain with Ganache. Make sure it is set on port 8545 and set the block gas limit to 8,000,000 becuase the exchange contract is too big to deploy
    ```
    $ ganache-cli -p 8545 -l 8000000
    ```
@@ -43,30 +43,51 @@ Requirements:
 
 You should see
 
-![tests](truffle_tests.png "Truffle Tests")
+![tests](/imgs/truffle_tests.png "Truffle Tests")
 
 # Run the DAPP
 
 Steps:
+
+1. From ganache, grab the private key of the first account and add it to metamask
+   ![private keys](/imgs/ganache_private_keys.png.png "Ganache Accounts Private keys")
+
+1. Connect Metamask to localhost
+   ![MM](/imgs/metamask_localhost.png "MetaMask Localhost")
+
+1. in MetaMask add the private key of the first account in ganache
+   ![MM](/imgs/metamask_import_first_account.png "MetaMask Account import")
+
+1. Run
+   ```
+   $ truffle migrate
+   ```
+1. Grab the ShartCoin address and add the custom token to metamask. You should see you have 100B SHT
+   ![SHT](/imgs/ShartCoin_address.png "Shart Coin migrated address")
+   ![SHT](/imgs/metamask_add_sht.png "Shart Coin Add Token")
+   ![SHT](/imgs/metamask_100BSHT.png "Shart Coin Balance")
 
 1. Go the `client` directory and install all the app dependencies.
    ```
    $ cd client
    $ npm install
    ```
-2. As this app is using ether.js the `Contract` constructor will need the contract address. You will need to update the address in `App.js`.
+1. As this app is using ether.js the `Contract` constructor will need the contract address. You will need to update the address in `App.js`. Update `SMART_CONTRACT_ADDR` to point to your local deployed address
+
    ```
    const SMART_CONTRACT_ADDR_ROPSTEN = "0xf371b912b26d3c9220e4e7cbc312591e6074721a";
    const SMART_CONTRACT_ADDR_LOCAL = "";
    const SMART_CONTRACT_ENS = "p2ptokenexchange.eth";
+
    // Set this const to your chosen ENV
    const SMART_CONTRACT_ADDR = SMART_CONTRACT_ADDR_ROPSTEN;
    ```
-3. Start the React app.
+
+1. Start the React app.
    ```
-   \$ npm run start
+   $ npm run start
    ```
-4. Alternatively you can use the app locally with the deployed contracts addresses:
+1. Alternatively you can test the app with the ropsten deployed addresses
 
 Ropsten:
 
@@ -84,7 +105,7 @@ Rinkeby:
 
 Ropsten: https://p2ptokenexchange-ropsten.netlify.com
 
-To test the ROPSTEN connected DAPP you can buy the existing SHT coin tokens for ROPSTEN ETH and then sell them back to the exchange to create a listing. Or send any ERC20 on ROPSTEN to create a listing. Or ping me and I'll send you some SHT.
+To test the ROPSTEN connected DAPP you can buy the existing SHT coin tokens for ROPSTEN ETH and then sell them back to the exchange to create a listing. Or send any ERC20 on ROPSTEN to create a listing. Or ping me with your MM wallet address and I'll send you some SHT.
 
 IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 
@@ -200,6 +221,6 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
 
 - [ ] Vyper Contract
 
-![ENS Auction](ens_bid.png "ENS Auction")
-![ENS Config](ens_config.png "ENS Config")
-![ENS Address Set](ens_ropsten_address_set.png "ENS Set to Ropsten")
+![ENS Auction](/imgs/ens_bid.png "ENS Auction")
+![ENS Config](/imgs/ens_config.png "ENS Config")
+![ENS Address Set](/imgs/ens_ropsten_address_set.png "ENS Set to Ropsten")

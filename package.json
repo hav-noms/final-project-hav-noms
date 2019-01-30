@@ -1,17 +1,19 @@
 {
   "name": "P2PTokenExchanger",
   "version": "1.0.0",
-  "description": "ERC20 to ETH Peer2Peer",
+  "description": "ERC20 to ETH Peer2Peer Token Exchange",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "ganache": "ganache-cli -e 1000000000000 -l 8000000",
+    "test": "concurrently -k -s first \"npm run ganache > /dev/null\" \"truffle compile && wait-port 8545 && truffle test\"",
+    "truffle": "truffle"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dev-bootcamp-2019/final-project-hav-noms.git"
+    "url": "git+https://github.com/hav-noms/final-project-hav-noms.git"
   },
   "keywords": [
     "Solidity",
@@ -20,16 +22,19 @@
   "author": "Clinton Ennis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dev-bootcamp-2019/final-project-hav-noms/issues"
+    "url": "https://github.com/hav-noms/final-project-hav-noms/issues"
   },
-  "homepage": "https://github.com/dev-bootcamp-2019/final-project-hav-noms#readme",
+  "homepage": "https://github.com/hav-noms/final-project-hav-noms#readme",
   "devDependencies": {
     "bn.js": "^4.11.8",
     "dotenv": "6.2.0",
     "fs": "^0.0.1-security",
+    "ganache-cli": "^6.1.8",
     "truffle-hdwallet-provider": "^1.0.2",
+    "truffle": "^5.0.0-beta.1",
     "path": "^0.12.7",
-    "web3": "^1.0.0-beta.36"
+    "web3": "^1.0.0-beta.36",
+    "concurrently": "^4.0.1"
   },
   "dependencies": {
     "openzeppelin-solidity": "^2.1.2"
