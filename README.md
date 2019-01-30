@@ -37,7 +37,7 @@ Requirements:
    ```
 1. Start a local blockchain with Ganache. Make sure it is set on port 8545.
    ```
-   $ ganache-cli -p 8545
+   $ ganache-cli -p 8545 -l 8000000
    ```
 1. Run `truffle test`
 
@@ -189,12 +189,17 @@ IPFS: https://ipfs.io/ipfs/QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu
         added QmdJcRert6m7eVj9KFVbkSVSyn9U4De1LxMvp8jFV36FR8 build/static
         added QmdXFKKok8i3E26V7mW7ZPPxqDzvMAjXywTwf8Rk8JT9fu build
 - [x] Ethereum Name Service - a name registered on the ENS resolves to the contract
+
   - [x] ENS Auction created for p2ptokenexchange.eth https://ropsten.etherscan.io/tx/0x96f6e371e123003a55069387732a51c85781ac5a33218fd9dcfdbdbc89b6e651
   - [x] ENS unseal Bid https://ropsten.etherscan.io/tx/0xc440a13409a0bb8c2fde4bb2ed0643916a4ef221d852fa2a58c9bf32e79a98b9
   - [x] ENS Auction finalized https://ropsten.etherscan.io/tx/0x695147dcfd3f86f9eb6652595a0baa287f010d463909afc6a5efa4bac9a01f2d
-  - [x] ENS Resolver, Public Name & Address set to 0xF371b912B26d3c9220e4e7cbC312591E6074721A https://ropsten.etherscan.io/tx/0xe811d55d3d1500590c883b7c2e2677a08f47f0973157f9d8d9e5e1b209e263c2
+  - [x] ENS Set Public Resolver 0xF371b912B26d3c9220e4e7cbC312591E6074721A https://ropsten.etherscan.io/tx/0x04221a576a65a676c51ce27cbd560eb118f077a9e6d3bfb8c2888afdd5fc550c
+  - [x] ENS Set Address to https://ropsten.etherscan.io/tx/0xdb80c4844ec0d08eb6eabe390bde947128f96fbe9d7727cf1351fb9b36cc8340
+
   - [x] ENS name p2ptokenexchange.eth verifiable on `https://ropsten.etherscan.io/p2ptokenexchange.eth`
+
 - [ ] Vyper Contract
 
 ![ENS Auction](ens_bid.png "ENS Auction")
 ![ENS Config](ens_config.png "ENS Config")
+![ENS Address Set](ens_ropsten_address_set.png "ENS Set to Ropsten")

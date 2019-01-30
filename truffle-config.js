@@ -23,17 +23,24 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const path = require("dotenv");
 const fs = require("fs");
 
-const infuraKey = fs
-  .readFileSync("infura_key.secret")
-  .toString()
-  .trim();
-console.log("infuraKey:", infuraKey);
+let infuraKey = "";
+let mnemonic = "";
 
-const mnemonic = fs
-  .readFileSync("mnemonic.secret")
-  .toString()
-  .trim();
-console.log("mnemonic:", mnemonic);
+try {
+  infuraKey = fs
+    .readFileSync("infura_key.secret")
+    .toString()
+    .trim();
+  console.log("infuraKey:", infuraKey);
+
+  mnemonic = fs
+    .readFileSync("mnemonic.secret")
+    .toString()
+    .trim();
+  console.log("mnemonic:", mnemonic);
+} catch (e) {
+  console.log(e);
+}
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
