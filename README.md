@@ -50,7 +50,7 @@ You should see
 Steps:
 
 1. From ganache, grab the private key of the first account and add it to metamask
-   ![private keys](/imgs/ganache_private_keys.png.png "Ganache Accounts Private keys")
+   ![private keys](/imgs/ganache_private_keys.png "Ganache Accounts Private keys")
 
 1. Connect Metamask to localhost
    ![MM](/imgs/metamask_localhost.png "MetaMask Localhost")
