@@ -62,9 +62,11 @@ Steps:
    ```
    $ truffle migrate
    ```
-1. Grab the ShartCoin address and add the custom token to metamask. You should see you have 100B SHT
+1. Grab the ShartCoin address from ganache
    ![SHT](/imgs/ShartCoin_address.png "Shart Coin migrated address")
+1. and add the custom token to metamask.
    ![SHT](/imgs/metamask_add_sht.png "Shart Coin Add Token")
+1. You should see you have 100B SHT
    ![SHT](/imgs/metamask_100BSHT.png "Shart Coin Balance")
 
 1. Go the `client` directory and install all the app dependencies.
@@ -73,6 +75,7 @@ Steps:
    $ npm install
    ```
 1. As this app is using ether.js the `Contract` constructor will need the contract address. You will need to update the address in `App.js`. Update `SMART_CONTRACT_ADDR` to point to your local deployed address
+   ![contract address](/imgs/TokenExchange_address.png "Deployed TokenExchange Adress")
 
    ```
    const SMART_CONTRACT_ADDR_ROPSTEN = "0xf371b912b26d3c9220e4e7cbc312591e6074721a";
